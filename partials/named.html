@@ -1,0 +1,31 @@
+    <section class="card card-title">
+        <p class="kicker">On the record</p>
+        <h1 class="h-xl">When an attack gets a name</h1>
+        <p class="lede">Most attacks are never traced. These are the ones researchers or governments pinned on a country, from 2000 to early 2025. Arcs run from the attacker’s country to the target’s; rings are attacks at home. Drag the globe, or tap a country.</p>
+    </section>
+    <section class="card">
+      <div class="gstats" id="globeStats"></div>
+      <div class="globe-controls">
+        <div class="seg" id="globeYears" role="tablist" aria-label="Years">
+          <button type="button" role="tab" data-year="all" aria-selected="true">2000 to 2025</button>
+          <button type="button" role="tab" data-year="2022" aria-selected="false">2022</button>
+          <button type="button" role="tab" data-year="2023" aria-selected="false">2023</button>
+          <button type="button" role="tab" data-year="2024" aria-selected="false">2024</button>
+        </div>
+        <div class="chips" id="globeTypes" aria-label="Kinds of attack"></div>
+        <label class="switch"><input type="checkbox" id="globeAll"><span class="track" aria-hidden="true"></span>Show every route</label>
+      </div>
+      <div class="globe-grid">
+        <div class="globe-wrap" id="globeWrap">
+          <canvas id="globe" role="img" aria-label="Globe with arcs from attacking countries to target countries"></canvas>
+          <div class="tip" id="globeTip" hidden></div>
+          <ul class="legend globe-legend" aria-label="Legend">
+            <li><i class="lg-line st"></i>State or state-linked</li>
+            <li><i class="lg-line ns"></i>Criminals, hacktivists, individuals</li>
+            <li><i class="lg-ring"></i>Inside one country</li>
+          </ul>
+        </div>
+        <aside class="globe-panel" id="globePanel" aria-live="polite"><p class="fine">Loading the map…</p></aside>
+      </div>
+      <p class="fine">Source: European Repository of Cyber Incidents (EuRepoC), Global Dataset v1.3.2, 2000 to February 2025, CC BY-NC 4.0. These are incidents made public and attributed by researchers or governments, not every attack: most are never reported, and a country named as the source isn’t always its government.</p>
+    </section>

@@ -4,9 +4,19 @@ import { fmtMoney, fmtCount, fmtBig, openSource, css, reducedMotion } from './ut
 
 const byId = Object.fromEntries(COUNTERS.map((c) => [c.id, c]));
 export const perSecond = (c) => c.value / (c.periodDays * 86400);
+export const LOSSES = byId.losses;
+
+// "Since you opened this page" carries across pages in the same tab.
+let started = Date.now();
+try {
+  const saved = Number(sessionStorage.getItem('breachclock:start'));
+  if (saved && saved <= started) started = saved;
+  else sessionStorage.setItem('breachclock:start', String(started));
+} catch {}
+export const sessionElapsed = () => (Date.now() - started) / 1000;
 
 // Rolling digits. Rebuilds when the shape of the string changes, otherwise just rolls.
-function odometer(el) {
+export function odometer(el) {
   el.classList.add('odo');
   let cells = [];
   const isD = (ch) => ch >= '0' && ch <= '9';
@@ -83,19 +93,11 @@ export function initClock() {
   for (const el of grid.querySelectorAll('.counter')) {
     views.push({ c: byId[el.dataset.counter], set: odometer(el.querySelector('[data-num]')), next: el.querySelector('[data-next] i') });
   }
-  // The floating pill shares the losses counter and tucks away when the big number is on screen.
-  const pill = document.getElementById('floatLive');
-  views.push({ c: byId.losses, set: odometer(document.getElementById('floatNum')), next: null });
-  let bigVisible = false;
-  const tuck = () => pill.classList.toggle('tucked', bigVisible || mode !== 'live');
-  new IntersectionObserver(([e]) => { bigVisible = e.isIntersecting; tuck(); }, { threshold: 0.3 }).observe(document.getElementById('bigNum'));
-  pill.addEventListener('click', () => document.getElementById('clock').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' }));
-
   document.querySelectorAll('[data-counter]').forEach((el) => el.addEventListener('click', () => openCounter(byId[el.dataset.counter])));
 
   let mode = 'live';
   let paused = false;
-  let elapsed = 0;
+  let elapsed = sessionElapsed();
   let last = performance.now();
   const elapsedEl = document.getElementById('elapsed');
   const sinceLabel = document.getElementById('sinceLabel');
@@ -107,7 +109,6 @@ export function initClock() {
     document.querySelectorAll('.hero-head [data-mode]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
     sinceLabel.textContent = mode === 'live' ? 'Since you opened this page' : mode === 'day' ? 'On an average day' : 'In a year';
     elapsedEl.hidden = mode !== 'live';
-    tuck();
     render();
   }));
   pauseBtn.addEventListener('click', () => {
@@ -142,9 +143,10 @@ export function initClock() {
   }
   render();
   requestAnimationFrame(tick);
+  // rAF stops in hidden tabs; catch up on return so the count stays "since you opened".
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') return;
     last = performance.now();
+    if (document.visibilityState === 'visible' && !paused) elapsed = Math.max(elapsed, sessionElapsed());
   });
 
   initStreams(() => paused);

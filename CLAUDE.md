@@ -33,3 +33,19 @@ Cybercrime made visible: live counters since you opened the page, the biggest br
 - Page order: globe hero, Scale, Live counters, How it happens, Sources. The floating pill
   (`#floatLive`) shares the losses counter in `clock.js` and tucks away while the big number is
   on screen.
+
+## v3: cards and pages
+- The home page (`index.html`) is a grid of cards; each opens its own page: `live.html`,
+  `clock.html`, `named.html`, `scale.html`, `how.html`, `sources.html`.
+- Pages are GENERATED. Edit `partials/<page>.html` or the shell in `scripts/build_pages.py`, then
+  run `python scripts/build_pages.py`. `app.js` loads only the current page's module
+  (`body[data-page]`).
+- Layout: cards meet edge to edge (no gaps) with a big radius, so the page colour (`--page`)
+  shows only at the corners. Cards use `--bg`. Content lives on cards, never on the page colour.
+- Live (`live.js`): DDoS attacks between countries at the real average pace. Rate per route =
+  (5,343 an hour ÷ 60) × source share × target share. The rate comes from the Cloudflare H1 2026
+  report; the shares come from Cloudflare Radar's application-layer DDoS top 20 for 7 days, kept in
+  `LIVE` in `data.js`. Refresh the shares by reading the Radar page (no API token is needed for
+  the page). Arrival times are simulated (Poisson); say so.
+- Globes share `globe-core.js` (palette cached, render loop pauses off screen or in hidden tabs).
+- "Since you opened this page" uses a sessionStorage start time, so it carries across pages.

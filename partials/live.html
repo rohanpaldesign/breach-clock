@@ -1,0 +1,39 @@
+    <section class="card card-title">
+        <p class="kicker"><span class="live-dot" aria-hidden="true"></span>Live</p>
+        <h1 class="h-xl">Attacks in flight</h1>
+        <p class="lede">About <b id="liveRate">89</b> DDoS attacks start somewhere every minute. Each streak is one of them, leaving the country its traffic comes from and landing on the one it hits, at the real average pace.</p>
+    </section>
+    <section class="card">
+      <div class="gstats" id="liveStats"></div>
+      <div class="globe-controls">
+        <div class="seg" id="liveSpeed" role="tablist" aria-label="Speed">
+          <button type="button" role="tab" data-speed="1" aria-selected="true">Real pace</button>
+          <button type="button" role="tab" data-speed="10" aria-selected="false">10× faster</button>
+        </div>
+        <p class="fine live-since"><span class="mono" id="liveCount">0</span> attacks drawn since you opened this page</p>
+      </div>
+      <div class="globe-grid">
+        <div class="globe-wrap" id="liveWrap">
+          <canvas id="liveGlobe" role="img" aria-label="Globe with attacks travelling from source countries to target countries"></canvas>
+          <div class="tip" id="liveTip" hidden></div>
+          <ul class="legend globe-legend" aria-label="Legend">
+            <li><i class="lg-line ns"></i>Attack on its way</li>
+            <li><i class="lg-hit"></i>Attack lands</li>
+            <li><i class="lg-ring"></i>Attack inside one country</li>
+          </ul>
+        </div>
+        <aside class="globe-panel" id="livePanel" aria-live="polite"><p class="fine">Loading the map…</p></aside>
+      </div>
+    </section>
+    <section class="card">
+      <div class="method">
+        <div>
+          <h3 class="h-sm">How the live view works</h3>
+          <p>Cloudflare blocked 23.2 million DDoS attacks in the first half of 2026, about <span class="mono">5,343 an hour</span>. Each route gets a share of that: <span class="mono">attacks a minute × source country’s share × target country’s share</span>, using the shares Cloudflare Radar reported for the 7 days to 16 November 2026. Attacks are then drawn at random at that average rate, so the timing is simulated but the pace and directions are real.</p>
+        </div>
+        <div>
+          <h3 class="h-sm">What it doesn’t tell you</h3>
+          <p>The source country is where the attack traffic came from, usually hijacked computers and rented servers, not where the attacker lives. It covers DDoS attacks Cloudflare saw, only the top 20 countries on each side (74% of sources), and assumes a country’s attacks spread across targets in proportion to how often each is hit. For attacks pinned on a country, see <a href="named.html">On the record</a>.</p>
+        </div>
+      </div>
+    </section>

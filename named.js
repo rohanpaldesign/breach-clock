@@ -1,33 +1,23 @@
 // Who attacks whom: a spinning globe of publicly reported cyber incidents between countries.
 // Data: EuRepoC (see data/flows.json and scripts/build_flows.py). Arcs are named attacker
 // country -> target country; rings are attacks inside one country.
-import { geoOrthographic, geoPath, geoGraticule10, geoInterpolate, geoDistance, geoContains } from 'https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/+esm';
-import { feature, mesh } from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
-import { css, esc, openSource, reducedMotion } from './util.js';
-import { addFigures } from './sources.js';
-
-const ATLAS = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json';
+import { createGlobe, loadAtlas, geoInterpolate, geoDistance, hexA, hash } from './globe-core.js';
+import { esc, openSource } from './util.js';
 export const TYPE_LABELS = { theft: 'Data theft', ransomware: 'Ransomware', ddos: 'DDoS or defacement', leak: 'Hack and leak', wiper: 'Wiper or outage', hijack: 'Hijacking' };
 const TOP_N = 150;
 
-export async function initGlobe() {
+export async function initNamed() {
   const canvas = document.getElementById('globe');
   const wrap = document.getElementById('globeWrap');
   const panel = document.getElementById('globePanel');
   const tip = document.getElementById('globeTip');
-  const ctx = canvas.getContext('2d');
-  const reduce = reducedMotion();
-
-  let world;
   let flows;
   try {
-    [world, flows] = await Promise.all([fetch(ATLAS).then((r) => r.json()), fetch('data/flows.json').then((r) => r.json())]);
+    [, flows] = await Promise.all([loadAtlas(), fetch('data/flows.json').then((r) => r.json())]);
   } catch (e) {
-    panel.innerHTML = '<p class="muted">The map couldn’t load. Check your connection and refresh.</p>';
+    panel.innerHTML = '<p class="fine">The map couldn’t load. Check your connection and refresh.</p>';
     return;
   }
-  const lands = feature(world, world.objects.countries).features;
-  const borders = mesh(world, world.objects.countries, (a, b) => a !== b);
   const C = flows.countries;
   const byNum = Object.fromEntries(Object.entries(C).map(([code, c]) => [c.num, code]));
   const ll = (code) => [C[code].lon, C[code].lat];
@@ -77,7 +67,6 @@ export async function initGlobe() {
     const s = stats[Number(b.dataset.i)];
     openSource({ title: 'Who attacks whom', value: String(s.v), sub: s.l, note: s.note, kind: 'measured', source: 'eurepoc' });
   });
-  addFigures(stats.map((s) => ({ label: s.f, value: String(s.v), period: '2000 to Feb 2025', source: 'eurepoc', kind: 'measured' })));
 
   // Controls
   const chipsEl = document.getElementById('globeTypes');
@@ -101,181 +90,20 @@ export async function initGlobe() {
   });
   document.getElementById('globeAll').addEventListener('change', (e) => { state.all = e.target.checked; renderPanel(); });
 
-  // Projection and sizing
-  const proj = geoOrthographic().clipAngle(90).precision(0.4);
-  const path = geoPath(proj, ctx);
-  const grat = geoGraticule10();
-  let rot = [-20, -22];
-  let size = 0;
-  let dpr = 1;
-  function resize() {
-    dpr = Math.min(2, window.devicePixelRatio || 1);
-    size = wrap.clientWidth;
-    canvas.width = Math.round(size * dpr);
-    canvas.height = Math.round(size * dpr);
-    canvas.style.height = `${size}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    proj.scale(size / 2 - 10).translate([size / 2, size / 2]);
-  }
-  resize();
-  new ResizeObserver(resize).observe(wrap);
-
-  // Rotation: spins slowly; drag to turn; picking a country eases it to the front.
-  let dragging = false;
-  let moved = false;
-  let lastInteract = -1e9;
-  let tween = null;
-  let last = performance.now();
-  let t = 0;
-  const center = () => [-rot[0], -rot[1]];
-  const visible = (p) => geoDistance(p, center()) < Math.PI / 2 - 0.02;
-
-  function focus(code) {
-    const [lon, lat] = ll(code);
-    tween = { from: [...rot], to: [-lon, Math.max(-50, Math.min(50, -lat))], t0: performance.now() };
-    if (tween.to[0] - tween.from[0] > 180) tween.from[0] += 360;
-    if (tween.from[0] - tween.to[0] > 180) tween.from[0] -= 360;
-  }
-
-  function select(code) {
-    state.selected = code;
-    lastInteract = performance.now();
-    if (code) focus(code);
-    renderPanel();
-  }
-
-  let px = 0;
-  let py = 0;
-  canvas.addEventListener('pointerdown', (e) => {
-    dragging = true;
-    moved = false;
-    px = e.clientX;
-    py = e.clientY;
-    tween = null;
-    canvas.setPointerCapture(e.pointerId);
+  const G = await createGlobe({
+    wrap, canvas, tip,
+    codeByNum: byNum,
+    nameOf: (code) => C[code].name,
+    onSelect: (code) => { state.selected = code; if (code) G.focus(ll(code)); renderPanel(); },
+    overlay: draw,
   });
-  canvas.addEventListener('pointermove', (e) => {
-    if (dragging) {
-      const dx = e.clientX - px;
-      const dy = e.clientY - py;
-      if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
-      const k = 90 / proj.scale();
-      rot[0] += dx * k * 1.6;
-      rot[1] = Math.max(-70, Math.min(70, rot[1] - dy * k * 1.6));
-      px = e.clientX;
-      py = e.clientY;
-      lastInteract = performance.now();
-      return;
-    }
-    if (e.pointerType === 'touch') return;
-    const code = pick(e);
-    const name = code ? C[code].name : hoverName(e);
-    state.hover = code;
-    canvas.style.cursor = name ? 'pointer' : 'grab';
-    if (name) {
-      const r = wrap.getBoundingClientRect();
-      tip.hidden = false;
-      tip.textContent = name;
-      tip.style.left = `${e.clientX - r.left + 12}px`;
-      tip.style.top = `${e.clientY - r.top + 12}px`;
-    } else tip.hidden = true;
-  });
-  canvas.addEventListener('pointerup', (e) => {
-    dragging = false;
-    if (!moved) select(pick(e) || null);
-  });
-  canvas.addEventListener('pointerleave', () => { tip.hidden = true; state.hover = null; });
+  G.numOf = (code) => C[code].num;
+  const select = (code) => G.select(code);
 
-  function lonlatAt(e) {
-    const r = canvas.getBoundingClientRect();
-    const p = proj.invert([e.clientX - r.left, e.clientY - r.top]);
-    if (!p || !visible(p)) return null;
-    return p;
-  }
-  function featAt(e) {
-    const p = lonlatAt(e);
-    return p ? lands.find((f) => geoContains(f, p)) : null;
-  }
-  function pick(e) {
-    const f = featAt(e);
-    return f && byNum[f.id] ? byNum[f.id] : null;
-  }
-  function hoverName(e) {
-    const f = featAt(e);
-    return f ? f.properties.name : null;
-  }
-
-  // Drawing
-  function frame(now) {
-    const dt = Math.min(0.1, (now - last) / 1000);
-    last = now;
-    t += dt;
-    if (tween) {
-      const k = Math.min(1, (now - tween.t0) / 900);
-      const e = 1 - Math.pow(1 - k, 3);
-      rot = [tween.from[0] + (tween.to[0] - tween.from[0]) * e, tween.from[1] + (tween.to[1] - tween.from[1]) * e];
-      if (k >= 1) tween = null;
-    } else if (!dragging && !reduce && !state.selected && now - lastInteract > 3500) {
-      rot[0] += dt * 5;
-    }
-    proj.rotate(rot);
-    draw();
-    requestAnimationFrame(frame);
-  }
-
-  function draw() {
-    const P = { bg: css('--bg'), ocean: css('--surface'), land: css('--surface-2'), line: css('--line'), signal: css('--signal'), alert: css('--alert'), ink: css('--ink'), muted: css('--muted') };
-    const r = proj.scale();
-    const cx = size / 2;
-    ctx.clearRect(0, 0, size, size);
-    // rim glow
-    const g = ctx.createRadialGradient(cx, cx, r * 0.92, cx, cx, r * 1.06);
-    g.addColorStop(0, 'rgba(255,176,0,0)');
-    g.addColorStop(0.5, hexA(P.signal, 0.12));
-    g.addColorStop(1, 'rgba(255,176,0,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.arc(cx, cx, r * 1.06, 0, Math.PI * 2);
-    ctx.fill();
-    // ocean
-    ctx.beginPath();
-    path({ type: 'Sphere' });
-    ctx.fillStyle = P.ocean;
-    ctx.fill();
-    ctx.beginPath();
-    path(grat);
-    ctx.strokeStyle = hexA(P.line, 0.55);
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-    // land
-    ctx.beginPath();
-    for (const f of lands) path(f);
-    ctx.fillStyle = P.land;
-    ctx.fill();
+  function draw(g) {
+    const { ctx, path, proj, P, reduce, t } = g;
     const sel = state.selected;
-    const hov = state.hover;
-    for (const code of [sel, hov]) {
-      if (!code) continue;
-      const f = lands.find((x) => x.id === C[code].num);
-      if (!f) continue;
-      ctx.beginPath();
-      path(f);
-      ctx.fillStyle = hexA(P.signal, code === sel ? 0.32 : 0.16);
-      ctx.fill();
-    }
-    ctx.beginPath();
-    path(borders);
-    ctx.strokeStyle = P.line;
-    ctx.lineWidth = 0.6;
-    ctx.stroke();
-    ctx.beginPath();
-    path({ type: 'Sphere' });
-    ctx.strokeStyle = hexA(P.signal, 0.35);
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
     const list = state.all ? shown : shown.slice(0, TOP_N);
-    // arcs
     ctx.lineCap = 'round';
     for (const row of list) {
       const p = row.p;
@@ -289,21 +117,18 @@ export async function initGlobe() {
       ctx.lineWidth = 0.6 + Math.log2(row.n + 1) * 0.55;
       ctx.stroke();
     }
-    // particles
     if (!reduce) {
       for (const row of list) {
         const p = row.p;
         if (p.from === p.to) continue;
-        const related = sel && (p.from === sel || p.to === sel);
-        if (sel && !related) continue;
+        if (sel && p.from !== sel && p.to !== sel) continue;
         const k = Math.min(4, 1 + Math.floor(Math.log2(row.n)));
         const speed = 0.16 / (p._d + 0.35);
         const col = row.stateShare >= 0.5 ? P.alert : P.signal;
         for (let i = 0; i < k; i++) {
-          const ph = (t * speed + i / k + hash(p.from + p.to)) % 1;
-          const ptLL = p._f(ph);
-          if (!visible(ptLL)) continue;
-          const [x, y] = proj(ptLL);
+          const pt = p._f((t * speed + i / k + hash(p.from + p.to)) % 1);
+          if (!g.visible(pt)) continue;
+          const [x, y] = proj(pt);
           ctx.fillStyle = hexA(col, 0.25);
           ctx.beginPath();
           ctx.arc(x, y, 4, 0, Math.PI * 2);
@@ -315,13 +140,11 @@ export async function initGlobe() {
         }
       }
     }
-    // domestic rings
     for (const row of list) {
       const p = row.p;
-      if (p.from !== p.to) continue;
+      if (p.from !== p.to || (sel && p.from !== sel)) continue;
       const pos = ll(p.from);
-      if (!visible(pos)) continue;
-      if (sel && p.from !== sel) continue;
+      if (!g.visible(pos)) continue;
       const [x, y] = proj(pos);
       const rad = 3 + Math.sqrt(row.n) * 1.5;
       ctx.strokeStyle = hexA(P.ink, 0.85);
@@ -337,19 +160,7 @@ export async function initGlobe() {
         ctx.stroke();
       }
     }
-    // label for the selected country
-    if (sel && visible(ll(sel))) {
-      const [x, y] = proj(ll(sel));
-      ctx.font = '600 13px "Space Grotesk", sans-serif';
-      const w = ctx.measureText(C[sel].name).width + 16;
-      ctx.fillStyle = P.ink;
-      roundRect(ctx, x - w / 2, y - 34, w, 22, 11);
-      ctx.fill();
-      ctx.fillStyle = P.bg;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(C[sel].name, x, y - 23);
-    }
+    if (sel) g.label(sel, ll(sel));
   }
 
   // Side panel
@@ -398,27 +209,4 @@ export async function initGlobe() {
   });
 
   refilter();
-  requestAnimationFrame(frame);
-}
-
-function hash(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 1000;
-  return h / 1000;
-}
-function hexA(c, a) {
-  c = c.trim();
-  if (c.startsWith('#')) {
-    const n = c.length === 4 ? c.slice(1).split('').map((x) => x + x).join('') : c.slice(1, 7);
-    return `rgba(${parseInt(n.slice(0, 2), 16)},${parseInt(n.slice(2, 4), 16)},${parseInt(n.slice(4, 6), 16)},${a})`;
-  }
-  return c;
-}
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
 }

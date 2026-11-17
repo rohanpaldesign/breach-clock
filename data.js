@@ -8,6 +8,18 @@
 export const ACCESSED = '16 November 2026';
 
 export const SOURCES = {
+  cfReport: {
+    publisher: 'Cloudflare',
+    title: 'DDoS threat report for 2026 H1',
+    date: '11 August 2026',
+    url: 'https://blog.cloudflare.com/ddos-threat-report-2026-h1/',
+  },
+  cfRadar: {
+    publisher: 'Cloudflare Radar',
+    title: 'Application layer DDoS attacks, share by source and target location, last 7 days (CC BY-NC 4.0)',
+    date: 'read 16 November 2026',
+    url: 'https://radar.cloudflare.com/security/application-layer?dateRange=7d',
+  },
   ic3: {
     publisher: 'FBI Internet Crime Complaint Center',
     title: '2025 IC3 Annual Report',
@@ -291,4 +303,14 @@ export const STATUSES = {
   reported: 'Reported by journalists; no company count yet',
   claimed: 'The attackers’ own number',
   compiled: 'Older leaks re-packaged, not a new breach',
+};
+
+export const LIVE = {
+  // Attack rate: Cloudflare, H1 2026 average (23.2 million network-layer DDoS attacks in H1).
+  perHour: 5343,
+  // Share of application-layer DDoS attacks by country, Cloudflare Radar, 7 days to 16 Nov 2026 (top 20 each).
+  sources: [["ID", 13.9], ["US", 12.7], ["CN", 8.1], ["DE", 4.0], ["SG", 3.8], ["NL", 3.5], ["VN", 3.3], ["BE", 2.8], ["BR", 2.7], ["PH", 2.4], ["IN", 2.2], ["FR", 2.0], ["MX", 2.0], ["CO", 1.8], ["TH", 1.8], ["BD", 1.6], ["TR", 1.5], ["CM", 1.4], ["HK", 1.3], ["JP", 1.3]],
+  targets: [["US", 52.1], ["CA", 12.7], ["IL", 6.5], ["CY", 4.7], ["GB", 4.2], ["CW", 2.8], ["BR", 2.4], ["HK", 1.5], ["RU", 1.3], ["VN", 1.0], ["AE", 0.8], ["CR", 0.8], ["AU", 0.7], ["TR", 0.6], ["AM", 0.5], ["CN", 0.5], ["NP", 0.5], ["NL", 0.5], ["PT", 0.4], ["SG", 0.4]],
+  // code: [name, ISO numeric, lat, lon]
+  places: {"AE": ["UAE", "784", 24, 54], "AM": ["Armenia", "051", 40, 45], "AU": ["Australia", "036", -27, 133], "BD": ["Bangladesh", "050", 24, 90], "BE": ["Belgium", "056", 50.83333333, 4], "BR": ["Brazil", "076", -10, -55], "CA": ["Canada", "124", 60, -95], "CM": ["Cameroon", "120", 6, 12], "CN": ["China", "156", 35, 105], "CO": ["Colombia", "170", 4, -72], "CR": ["Costa Rica", "188", 10, -84], "CW": ["Curaçao", "531", 12.116667, -68.933333], "CY": ["Cyprus", "196", 35, 33], "DE": ["Germany", "276", 51, 9], "FR": ["France", "250", 46, 2], "GB": ["United Kingdom", "826", 54, -2], "HK": ["Hong Kong", "344", 22.267, 114.188], "ID": ["Indonesia", "360", -5, 120], "IL": ["Israel", "376", 31.47, 35.13], "IN": ["India", "356", 20, 77], "JP": ["Japan", "392", 36, 138], "MX": ["Mexico", "484", 23, -102], "NL": ["Netherlands", "528", 52.5, 5.75], "NP": ["Nepal", "524", 28, 84], "PH": ["Philippines", "608", 13, 122], "PT": ["Portugal", "620", 39.5, -8], "RU": ["Russia", "643", 60, 100], "SG": ["Singapore", "702", 1.36666666, 103.8], "TH": ["Thailand", "764", 15, 100], "TR": ["Türkiye", "792", 39, 35], "US": ["United States", "840", 38, -97], "VN": ["Vietnam", "704", 16.16666666, 107.83333333]},
 };
