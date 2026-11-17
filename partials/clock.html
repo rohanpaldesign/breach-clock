@@ -1,0 +1,35 @@
+    <section class="card live" id="clock">
+
+      <div class="hero-head">
+        <p class="kicker"><span class="live-dot" aria-hidden="true"></span><span id="sinceLabel">Since you opened this page</span> <span class="mono" id="elapsed">00:00</span></p>
+        <div class="seg" role="tablist" aria-label="Show counts">
+          <button type="button" role="tab" data-mode="live" aria-selected="true">Since you arrived</button>
+          <button type="button" role="tab" data-mode="day" aria-selected="false">Per day</button>
+          <button type="button" role="tab" data-mode="year" aria-selected="false">Per year</button>
+        </div>
+      </div>
+      <h1 class="h-xl clock-h">The meter is running</h1>
+
+      <button class="big-counter" type="button" data-counter="losses" aria-describedby="bigLabel">
+        <span class="big-num" id="bigNum" aria-live="off">$0</span>
+        <span class="big-label" id="bigLabel">lost to internet crime reported to the FBI</span>
+        <span class="src-chip">FBI IC3 · 2025 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </button>
+
+      <div class="counter-grid" id="counterGrid"></div>
+
+
+    </section>
+    <section class="card">
+      <div class="streams-inner">
+        <div class="streams-head">
+          <h2 class="h-sm">The same, as it arrives</h2>
+          <button class="pill-btn" id="pauseBtn" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
+            <span>Pause</span>
+          </button>
+        </div>
+        <canvas id="streams" aria-label="Event streams: each dot is one event arriving at the real rate" role="img"></canvas>
+        <p class="fine">Each lane spreads a published yearly total evenly over time, so a dot appears as often as the real thing happens on average. Tap a number above to see its source and the maths.</p>
+      </div>
+    </section>

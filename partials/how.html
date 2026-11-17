@@ -1,0 +1,29 @@
+    <section class="card card-title">
+        <p class="kicker">How it happens</p>
+        <h1 class="h-xl">Five attacks, step by step</h1>
+        <p class="lede">Each one shows the attacker’s path and the one place it could have been stopped.</p>
+    </section>
+    <section class="card">
+      <div class="tabs" id="wtTabs" role="tablist" aria-label="Attacks"></div>
+      <div class="wt-card">
+        <div class="wt-stage"><svg id="wtSvg" viewBox="0 0 800 400" role="img" aria-labelledby="wtCaptionTitle"></svg></div>
+        <div class="wt-side">
+          <p class="mono wt-step" id="wtStepNo"></p>
+          <h3 class="h-md" id="wtCaptionTitle"></h3>
+          <p id="wtCaption"></p>
+          <div class="wt-controls">
+            <button class="icon-btn" id="wtPrev" type="button" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <button class="pill-btn" id="wtPlay" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg><span>Play</span></button>
+            <button class="icon-btn" id="wtNext" type="button" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+          <input class="scrub" id="wtScrub" type="range" min="0" max="5" step="1" value="0" aria-label="Step">
+        </div>
+      </div>
+      <div class="wt-bottom">
+        <div class="wt-stats" id="wtStats"></div>
+        <div class="wt-fix">
+          <h3 class="h-sm">What would have stopped it</h3>
+          <ul id="wtFix"></ul>
+        </div>
+      </div>
+    </section>

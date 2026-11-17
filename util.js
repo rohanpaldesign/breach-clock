@@ -32,6 +32,7 @@ export const KIND_TEXT = {
   reported: 'Second-hand: from coverage of the report',
   claimed: 'The attackers’ own number',
   compiled: 'Older leaks re-packaged',
+  estimated: 'Estimated from published figures (the maths is shown)',
   confirmed: 'Confirmed by the company or official filings',
 };
 

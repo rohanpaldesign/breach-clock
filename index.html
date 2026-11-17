@@ -4,201 +4,94 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Breach Clock</title>
-  <meta name="description" content="Cybercrime as it happens: live counters, the biggest breaches drawn to scale, and how attacks unfold. Every figure sourced.">
+  <meta name="description" content="Cybercrime, counted: attacks in flight, money lost, the biggest breaches and how they happen. Every figure sourced.">
   <meta name="theme-color" content="#0d0c0b">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ffb000' stroke-width='3'/%3E%3Cpath d='M16 8v8l5 3' stroke='%23ffb000' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>try{var t=localStorage.getItem('breachclock:theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
-<body>
-  <header class="top">
-    <a class="brand" href="#map" aria-label="Breach Clock, back to top">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 8v8l5 3"/></svg>
-      Breach Clock
-    </a>
-    <nav class="nav" aria-label="Sections">
-      <a href="#map">Map</a>
-      <a href="#scale">Scale</a>
-      <a href="#clock">Live</a>
-      <a href="#how">How it happens</a>
-      <a href="#sources">Sources</a>
-    </nav>
-    <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch light or dark theme" title="Switch theme">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
-    </button>
-  </header>
-
-  <main>
-    <!-- 1. Who attacks whom -->
-    <section id="map" class="chapter hero">
-      <div class="chapter-head">
-        <p class="kicker"><span class="live-dot" aria-hidden="true"></span>Who attacks whom</p>
-        <h1 class="h-xl">Cyberattacks between countries, and inside them</h1>
-        <p class="lede">Every arc is a publicly reported attack traced from the attacker’s country to the target’s. Rings are attacks inside one country. Drag to turn the globe; tap a country.</p>
-      </div>
-      <div class="gstats" id="globeStats"></div>
-      <div class="globe-controls">
-        <div class="seg" id="globeYears" role="tablist" aria-label="Years">
-          <button type="button" role="tab" data-year="all" aria-selected="true">2000 to 2025</button>
-          <button type="button" role="tab" data-year="2022" aria-selected="false">2022</button>
-          <button type="button" role="tab" data-year="2023" aria-selected="false">2023</button>
-          <button type="button" role="tab" data-year="2024" aria-selected="false">2024</button>
-        </div>
-        <div class="chips" id="globeTypes" aria-label="Kinds of attack"></div>
-        <label class="switch"><input type="checkbox" id="globeAll"><span class="track" aria-hidden="true"></span>Show every route</label>
-      </div>
-      <div class="globe-grid">
-        <div class="globe-wrap" id="globeWrap">
-          <canvas id="globe" role="img" aria-label="Globe with arcs from attacking countries to target countries"></canvas>
-          <div class="tip" id="globeTip" hidden></div>
-          <ul class="legend globe-legend" aria-label="Legend">
-            <li><i class="lg-line st"></i>State or state-linked</li>
-            <li><i class="lg-line ns"></i>Criminals, hacktivists, individuals</li>
-            <li><i class="lg-ring"></i>Inside one country</li>
-          </ul>
-        </div>
-        <aside class="globe-panel" id="globePanel" aria-live="polite"><p class="fine">Loading the map…</p></aside>
-      </div>
-      <p class="fine">Source: European Repository of Cyber Incidents (EuRepoC), Global Dataset v1.3.2, 2000 to February 2025, CC BY-NC 4.0. These are incidents made public and attributed by researchers or governments, not every attack: most are never reported, and a country named as the source isn’t always its government.</p>
-    </section>
-
-    <!-- 2. Scale -->
-    <section id="scale" class="chapter">
-      <div class="chapter-head">
-        <p class="kicker">Scale</p>
-        <h2 class="h-lg">The biggest breaches, one dot per million</h2>
-        <p class="lede">Every dot is a million records. Hover or tap a cluster for what happened and the source.</p>
-      </div>
-      <div class="scale-controls">
-        <div class="seg" id="yearSeg" role="tablist" aria-label="Years">
-          <button type="button" role="tab" data-years="all" aria-selected="true">All years</button>
-          <button type="button" role="tab" data-years="2013-2019" aria-selected="false">2013–2019</button>
-          <button type="button" role="tab" data-years="2020-2023" aria-selected="false">2020–2023</button>
-          <button type="button" role="tab" data-years="2024-2026" aria-selected="false">2024–2026</button>
-        </div>
-        <div class="chips" id="causeChips" aria-label="Causes"></div>
-        <label class="switch"><input type="checkbox" id="compiledToggle"><span class="track" aria-hidden="true"></span>Include compilations of old leaks</label>
-        <div class="seg seg-sm" id="sortSeg" role="tablist" aria-label="Sort">
-          <button type="button" role="tab" data-sort="size" aria-selected="true">Biggest</button>
-          <button type="button" role="tab" data-sort="year" aria-selected="false">Newest</button>
-        </div>
-      </div>
-      <p class="scale-summary mono" id="scaleSummary"></p>
-      <div class="scale-stage" id="scaleStage">
-        <canvas id="scaleCanvas" role="img" aria-label="Breaches drawn as clusters of dots, one dot per million records"></canvas>
-        <div class="tip" id="scaleTip" hidden></div>
-      </div>
-      <ul class="legend" aria-label="Legend">
-        <li><i class="lg confirmed"></i>Confirmed</li>
-        <li><i class="lg reported"></i>Reported, no company count</li>
-        <li><i class="lg claimed"></i>Attackers’ claim</li>
-        <li><i class="lg compiled"></i>Compilation of old leaks</li>
-      </ul>
-      <div class="detail" id="scaleDetail" aria-live="polite"></div>
-      <noscript><p>The breach list is also in the Sources section below.</p></noscript>
-    </section>
-
-    <!-- 3. Since you arrived -->
-    <section id="clock" class="chapter live">
-      <div class="hero-head">
-        <p class="kicker"><span class="live-dot" aria-hidden="true"></span><span id="sinceLabel">Since you opened this page</span> <span class="mono" id="elapsed">00:00</span></p>
-        <div class="seg" role="tablist" aria-label="Show counts">
-          <button type="button" role="tab" data-mode="live" aria-selected="true">Since you arrived</button>
-          <button type="button" role="tab" data-mode="day" aria-selected="false">Per day</button>
-          <button type="button" role="tab" data-mode="year" aria-selected="false">Per year</button>
-        </div>
-      </div>
-
-      <button class="big-counter" type="button" data-counter="losses" aria-describedby="bigLabel">
-        <span class="big-num" id="bigNum" aria-live="off">$0</span>
-        <span class="big-label" id="bigLabel">lost to internet crime reported to the FBI</span>
-        <span class="src-chip">FBI IC3 · 2025 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+<body data-page="index">
+  <!-- Generated by scripts/build_pages.py from partials/index.html. Edit those, not this file. -->
+  <div class="deck">
+    <header class="card bar">
+      <a class="brand" href="index.html" aria-label="Breach Clock, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 8v8l5 3"/></svg>
+        Breach Clock
+      </a>
+      <nav class="nav" aria-label="Pages">
+      <a href="live.html">Live</a>
+      <a href="clock.html">Since you arrived</a>
+      <a href="named.html">On the record</a>
+      <a href="scale.html">Scale</a>
+      <a href="how.html">How it happens</a>
+      <a href="sources.html">Sources</a>
+      </nav>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch light or dark theme" title="Switch theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
       </button>
+    </header>
 
-      <div class="counter-grid" id="counterGrid"></div>
-
-      <div class="streams-card">
-        <div class="streams-head">
-          <h2 class="h-sm">The same, as it arrives</h2>
-          <button class="pill-btn" id="pauseBtn" type="button" aria-pressed="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
-            <span>Pause</span>
-          </button>
-        </div>
-        <canvas id="streams" aria-label="Event streams: each dot is one event arriving at the real rate" role="img"></canvas>
-        <p class="fine">Each lane spreads a published yearly total evenly over time, so a dot appears as often as the real thing happens on average. Tap a number above to see its source and the maths.</p>
-      </div>
+    <main class="deck-main">
+    <section class="card card-hero">
+      <p class="kicker"><span class="live-dot" aria-hidden="true"></span>Breach Clock</p>
+      <h1 class="h-xxl">Cybercrime, counted.</h1>
+      <p class="lede">Attacks in flight, money lost, the biggest breaches and how they happen. Every number links to its source.</p>
     </section>
+    <a class="card tile tile-wide" href="live.html">
+      <span class="kicker"><span class="live-dot" aria-hidden="true"></span>Live</span>
+      <span class="tile-title">Attacks in flight</span>
+      <span class="tile-num"><span id="tileRate">89</span><small>a minute</small></span>
+      <span class="tile-line">DDoS attacks starting right now, from the countries their traffic comes from to the ones they hit.</span>
+      <svg class="tile-art arcs" viewBox="0 0 400 200" aria-hidden="true">
+        <path d="M40 160 Q150 10 300 120"/><path d="M80 150 Q220 40 360 150"/><path d="M60 120 Q200 -10 330 80"/><path d="M120 170 Q240 90 370 110"/>
+        <circle r="4" class="m1"/><circle r="4" class="m2"/><circle r="4" class="m3"/>
+      </svg>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile" href="clock.html">
+      <span class="kicker">Since you opened this page</span>
+      <span class="tile-title">The meter is running</span>
+      <span class="tile-num alert" id="tileLoss">$0</span>
+      <span class="tile-line">lost to internet crime reported to the FBI, at the 2025 average rate.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile" href="named.html">
+      <span class="kicker">On the record</span>
+      <span class="tile-title">When an attack gets a name</span>
+      <span class="tile-num">2,776</span>
+      <span class="tile-line">attacks traced to a country since 2000. China to the US leads with 86.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile" href="scale.html">
+      <span class="kicker">Scale</span>
+      <span class="tile-title">The biggest breaches</span>
+      <span class="tile-num" id="tileBreach">29</span>
+      <span class="tile-line" id="tileBreachLine">breaches drawn to scale, one dot per million records.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile" href="how.html">
+      <span class="kicker">How it happens</span>
+      <span class="tile-title">Five attacks, step by step</span>
+      <span class="tile-num">5</span>
+      <span class="tile-line">A flaw, ransomware, phishing, a payment scam and a SIM swap, each with the one place it could have been stopped.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile tile-full" href="sources.html">
+      <span class="kicker">Sources</span>
+      <span class="tile-title">Where every number comes from</span>
+      <span class="tile-line">The FBI, Cloudflare, EuRepoC, APWG, ITRC, Chainalysis, Verizon and more, each marked as measured, second-hand or claimed.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    </main>
 
-    <!-- 3. How it happens -->
-    <section id="how" class="chapter">
-      <div class="chapter-head">
-        <p class="kicker">How it happens</p>
-        <h2 class="h-lg">Five attacks, step by step</h2>
-        <p class="lede">Each one shows the attacker’s path and the one place it could have been stopped.</p>
-      </div>
-      <div class="tabs" id="wtTabs" role="tablist" aria-label="Attacks"></div>
-      <div class="wt-card">
-        <div class="wt-stage"><svg id="wtSvg" viewBox="0 0 800 400" role="img" aria-labelledby="wtCaptionTitle"></svg></div>
-        <div class="wt-side">
-          <p class="mono wt-step" id="wtStepNo"></p>
-          <h3 class="h-md" id="wtCaptionTitle"></h3>
-          <p id="wtCaption"></p>
-          <div class="wt-controls">
-            <button class="icon-btn" id="wtPrev" type="button" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
-            <button class="pill-btn" id="wtPlay" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg><span>Play</span></button>
-            <button class="icon-btn" id="wtNext" type="button" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
-          </div>
-          <input class="scrub" id="wtScrub" type="range" min="0" max="5" step="1" value="0" aria-label="Step">
-        </div>
-      </div>
-      <div class="wt-bottom">
-        <div class="wt-stats" id="wtStats"></div>
-        <div class="wt-fix">
-          <h3 class="h-sm">What would have stopped it</h3>
-          <ul id="wtFix"></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. Sources -->
-    <section id="sources" class="chapter">
-      <div class="chapter-head">
-        <p class="kicker">Sources</p>
-        <h2 class="h-lg">Where every number comes from</h2>
-        <p class="lede" id="accessed"></p>
-      </div>
-      <div class="method">
-        <div>
-          <h3 class="h-sm">How the counters work</h3>
-          <p>Each counter takes a published total for a period and spreads it evenly: <span class="mono">total ÷ seconds in the period</span>. Real crime arrives in bursts, so read them as averages, not live feeds. Nothing on this page is tracked live.</p>
-        </div>
-        <div>
-          <h3 class="h-sm">What the numbers don’t cover</h3>
-          <p>FBI figures are only what victims reported, mostly in the US. Breach notices count notices, not unique people. Ransom totals are payments traceable on blockchains. Attackers inflate their own numbers, so claims are marked.</p>
-        </div>
-      </div>
-      <h3 class="h-sm">Every figure</h3>
-      <div class="table-wrap"><table class="src-table" id="figTable"></table></div>
-      <h3 class="h-sm">Breaches</h3>
-      <div class="table-wrap"><table class="src-table" id="breachTable"></table></div>
-      <h3 class="h-sm">Reports and articles</h3>
-      <ol class="src-list" id="srcList"></ol>
-    </section>
-  </main>
-
-  <button class="float-live" id="floatLive" type="button" aria-label="Lost since you opened this page. Go to the live counters.">
-    <span class="live-dot" aria-hidden="true"></span>
-    <span class="fl-num" id="floatNum">$0</span>
-    <span class="fl-label">lost to reported internet crime since you opened this page</span>
-  </button>
-
-  <footer class="foot">
-    <p>Breach Clock. Figures refresh yearly as new reports come out. Built as a static page; nothing about you is tracked.</p>
-    <a href="https://github.com/rohanpaldesign/breach-clock">Source on GitHub</a>
-  </footer>
+    <footer class="card foot">
+      <p>Breach Clock. Figures refresh as new reports come out. A static site; nothing about you is tracked.</p>
+      <a href="https://github.com/rohanpaldesign/breach-clock">Source on GitHub</a>
+    </footer>
+  </div>
 
   <dialog class="src-dialog" id="srcDialog" aria-labelledby="srcDialogTitle">
     <form method="dialog"><button class="icon-btn close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></form>

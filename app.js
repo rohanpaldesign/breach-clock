@@ -1,15 +1,5 @@
-import { initClock } from './clock.js';
-import { initScale } from './scale.js';
-import { initWalkthroughs } from './walkthroughs.js';
-import { initSources } from './sources.js';
-import { initGlobe } from './globe.js';
-
-// Theme: follows the system until the visitor picks one.
+// Shared by every page: theme toggle, then only the code the current page needs.
 const root = document.documentElement;
-try {
-  const saved = localStorage.getItem('breachclock:theme');
-  if (saved) root.dataset.theme = saved;
-} catch {}
 document.getElementById('themeBtn').addEventListener('click', () => {
   const dark = root.dataset.theme ? root.dataset.theme === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
   root.dataset.theme = dark ? 'light' : 'dark';
@@ -18,26 +8,15 @@ document.getElementById('themeBtn').addEventListener('click', () => {
 });
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => window.dispatchEvent(new Event('themechange')));
 
-initClock();
-initScale();
-initWalkthroughs();
-initSources();
-initGlobe();
-
-// Chapters fade up as they arrive; the nav marks the one in view.
-const chapters = [...document.querySelectorAll('.chapter')];
-const navLinks = [...document.querySelectorAll('.nav a')];
-for (const c of chapters.slice(1)) {
-  for (const el of c.children) el.classList.add('reveal');
-}
-const io = new IntersectionObserver((entries) => {
-  for (const e of entries) if (e.isIntersecting) e.target.classList.add('in');
-}, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-const navIo = new IntersectionObserver((entries) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    navLinks.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === `#${e.target.id}`));
-  }
-}, { rootMargin: '-45% 0px -50% 0px' });
-chapters.forEach((c) => navIo.observe(c));
+const page = document.body.dataset.page;
+const loaders = {
+  index: () => import('./home.js').then((m) => m.initHome()),
+  live: () => import('./live.js').then((m) => m.initLive()),
+  clock: () => import('./clock.js').then((m) => m.initClock()),
+  named: () => import('./named.js').then((m) => m.initNamed()),
+  scale: () => import('./scale.js').then((m) => m.initScale()),
+  how: () => import('./walkthroughs.js').then((m) => m.initWalkthroughs()),
+  sources: () => import('./sources.js').then((m) => m.initSources()),
+};
+loaders[page]?.();
+if (document.getElementById('floatLive')) import('./pill.js').then((m) => m.initPill());
