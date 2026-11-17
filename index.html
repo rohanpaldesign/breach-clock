@@ -14,13 +14,14 @@
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="#clock" aria-label="Breach Clock, back to top">
+    <a class="brand" href="#map" aria-label="Breach Clock, back to top">
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 8v8l5 3"/></svg>
       Breach Clock
     </a>
     <nav class="nav" aria-label="Sections">
-      <a href="#clock">Now</a>
+      <a href="#map">Map</a>
       <a href="#scale">Scale</a>
+      <a href="#clock">Live</a>
       <a href="#how">How it happens</a>
       <a href="#sources">Sources</a>
     </nav>
@@ -30,36 +31,37 @@
   </header>
 
   <main>
-    <!-- 1. Since you arrived -->
-    <section id="clock" class="chapter hero">
-      <div class="hero-head">
-        <p class="kicker"><span class="live-dot" aria-hidden="true"></span><span id="sinceLabel">Since you opened this page</span> <span class="mono" id="elapsed">00:00</span></p>
-        <div class="seg" role="tablist" aria-label="Show counts">
-          <button type="button" role="tab" data-mode="live" aria-selected="true">Since you arrived</button>
-          <button type="button" role="tab" data-mode="day" aria-selected="false">Per day</button>
-          <button type="button" role="tab" data-mode="year" aria-selected="false">Per year</button>
-        </div>
+    <!-- 1. Who attacks whom -->
+    <section id="map" class="chapter hero">
+      <div class="chapter-head">
+        <p class="kicker"><span class="live-dot" aria-hidden="true"></span>Who attacks whom</p>
+        <h1 class="h-xl">Cyberattacks between countries, and inside them</h1>
+        <p class="lede">Every arc is a publicly reported attack traced from the attacker’s country to the target’s. Rings are attacks inside one country. Drag to turn the globe; tap a country.</p>
       </div>
-
-      <button class="big-counter" type="button" data-counter="losses" aria-describedby="bigLabel">
-        <span class="big-num" id="bigNum" aria-live="off">$0</span>
-        <span class="big-label" id="bigLabel">lost to internet crime reported to the FBI</span>
-        <span class="src-chip">FBI IC3 · 2025 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </button>
-
-      <div class="counter-grid" id="counterGrid"></div>
-
-      <div class="streams-card">
-        <div class="streams-head">
-          <h2 class="h-sm">The same, as it arrives</h2>
-          <button class="pill-btn" id="pauseBtn" type="button" aria-pressed="false">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
-            <span>Pause</span>
-          </button>
+      <div class="gstats" id="globeStats"></div>
+      <div class="globe-controls">
+        <div class="seg" id="globeYears" role="tablist" aria-label="Years">
+          <button type="button" role="tab" data-year="all" aria-selected="true">2000 to 2025</button>
+          <button type="button" role="tab" data-year="2022" aria-selected="false">2022</button>
+          <button type="button" role="tab" data-year="2023" aria-selected="false">2023</button>
+          <button type="button" role="tab" data-year="2024" aria-selected="false">2024</button>
         </div>
-        <canvas id="streams" aria-label="Event streams: each dot is one event arriving at the real rate" role="img"></canvas>
-        <p class="fine">Each lane spreads a published yearly total evenly over time, so a dot appears as often as the real thing happens on average. Tap a number above to see its source and the maths.</p>
+        <div class="chips" id="globeTypes" aria-label="Kinds of attack"></div>
+        <label class="switch"><input type="checkbox" id="globeAll"><span class="track" aria-hidden="true"></span>Show every route</label>
       </div>
+      <div class="globe-grid">
+        <div class="globe-wrap" id="globeWrap">
+          <canvas id="globe" role="img" aria-label="Globe with arcs from attacking countries to target countries"></canvas>
+          <div class="tip" id="globeTip" hidden></div>
+          <ul class="legend globe-legend" aria-label="Legend">
+            <li><i class="lg-line st"></i>State or state-linked</li>
+            <li><i class="lg-line ns"></i>Criminals, hacktivists, individuals</li>
+            <li><i class="lg-ring"></i>Inside one country</li>
+          </ul>
+        </div>
+        <aside class="globe-panel" id="globePanel" aria-live="polite"><p class="fine">Loading the map…</p></aside>
+      </div>
+      <p class="fine">Source: European Repository of Cyber Incidents (EuRepoC), Global Dataset v1.3.2, 2000 to February 2025, CC BY-NC 4.0. These are incidents made public and attributed by researchers or governments, not every attack: most are never reported, and a country named as the source isn’t always its government.</p>
     </section>
 
     <!-- 2. Scale -->
@@ -96,6 +98,38 @@
       </ul>
       <div class="detail" id="scaleDetail" aria-live="polite"></div>
       <noscript><p>The breach list is also in the Sources section below.</p></noscript>
+    </section>
+
+    <!-- 3. Since you arrived -->
+    <section id="clock" class="chapter live">
+      <div class="hero-head">
+        <p class="kicker"><span class="live-dot" aria-hidden="true"></span><span id="sinceLabel">Since you opened this page</span> <span class="mono" id="elapsed">00:00</span></p>
+        <div class="seg" role="tablist" aria-label="Show counts">
+          <button type="button" role="tab" data-mode="live" aria-selected="true">Since you arrived</button>
+          <button type="button" role="tab" data-mode="day" aria-selected="false">Per day</button>
+          <button type="button" role="tab" data-mode="year" aria-selected="false">Per year</button>
+        </div>
+      </div>
+
+      <button class="big-counter" type="button" data-counter="losses" aria-describedby="bigLabel">
+        <span class="big-num" id="bigNum" aria-live="off">$0</span>
+        <span class="big-label" id="bigLabel">lost to internet crime reported to the FBI</span>
+        <span class="src-chip">FBI IC3 · 2025 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </button>
+
+      <div class="counter-grid" id="counterGrid"></div>
+
+      <div class="streams-card">
+        <div class="streams-head">
+          <h2 class="h-sm">The same, as it arrives</h2>
+          <button class="pill-btn" id="pauseBtn" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
+            <span>Pause</span>
+          </button>
+        </div>
+        <canvas id="streams" aria-label="Event streams: each dot is one event arriving at the real rate" role="img"></canvas>
+        <p class="fine">Each lane spreads a published yearly total evenly over time, so a dot appears as often as the real thing happens on average. Tap a number above to see its source and the maths.</p>
+      </div>
     </section>
 
     <!-- 3. How it happens -->
@@ -154,6 +188,12 @@
       <ol class="src-list" id="srcList"></ol>
     </section>
   </main>
+
+  <button class="float-live" id="floatLive" type="button" aria-label="Lost since you opened this page. Go to the live counters.">
+    <span class="live-dot" aria-hidden="true"></span>
+    <span class="fl-num" id="floatNum">$0</span>
+    <span class="fl-label">lost to reported internet crime since you opened this page</span>
+  </button>
 
   <footer class="foot">
     <p>Breach Clock. Figures refresh yearly as new reports come out. Built as a static page; nothing about you is tracked.</p>

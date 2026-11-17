@@ -43,7 +43,7 @@ function odometer(el) {
       if (c.ch !== ch) {
         // A digit that changes faster than the roll would blur, so it snaps instead.
         const now = performance.now();
-        c.s.firstChild.style.transition = now - (c.t || 0) < 700 ? 'none' : '';
+        c.s.firstChild.style.transition = now - (c.t || 0) < 1200 ? 'none' : '';
         c.t = now;
         c.s.firstChild.style.transform = `translateY(-${Number(ch) * 10}%)`;
         c.ch = ch;
@@ -83,6 +83,14 @@ export function initClock() {
   for (const el of grid.querySelectorAll('.counter')) {
     views.push({ c: byId[el.dataset.counter], set: odometer(el.querySelector('[data-num]')), next: el.querySelector('[data-next] i') });
   }
+  // The floating pill shares the losses counter and tucks away when the big number is on screen.
+  const pill = document.getElementById('floatLive');
+  views.push({ c: byId.losses, set: odometer(document.getElementById('floatNum')), next: null });
+  let bigVisible = false;
+  const tuck = () => pill.classList.toggle('tucked', bigVisible || mode !== 'live');
+  new IntersectionObserver(([e]) => { bigVisible = e.isIntersecting; tuck(); }, { threshold: 0.3 }).observe(document.getElementById('bigNum'));
+  pill.addEventListener('click', () => document.getElementById('clock').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' }));
+
   document.querySelectorAll('[data-counter]').forEach((el) => el.addEventListener('click', () => openCounter(byId[el.dataset.counter])));
 
   let mode = 'live';
@@ -99,6 +107,7 @@ export function initClock() {
     document.querySelectorAll('.hero-head [data-mode]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
     sinceLabel.textContent = mode === 'live' ? 'Since you opened this page' : mode === 'day' ? 'On an average day' : 'In a year';
     elapsedEl.hidden = mode !== 'live';
+    tuck();
     render();
   }));
   pauseBtn.addEventListener('click', () => {
