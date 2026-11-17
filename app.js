@@ -2,6 +2,7 @@ import { initClock } from './clock.js';
 import { initScale } from './scale.js';
 import { initWalkthroughs } from './walkthroughs.js';
 import { initSources } from './sources.js';
+import { initGlobe } from './globe.js';
 
 // Theme: follows the system until the visitor picks one.
 const root = document.documentElement;
@@ -21,6 +22,7 @@ initClock();
 initScale();
 initWalkthroughs();
 initSources();
+initGlobe();
 
 // Chapters fade up as they arrive; the nav marks the one in view.
 const chapters = [...document.querySelectorAll('.chapter')];
