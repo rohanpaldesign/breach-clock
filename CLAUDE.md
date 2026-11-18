@@ -60,3 +60,12 @@ Cybercrime made visible: live counters since you opened the page, the biggest br
   from the home cards.
 - On the record stays still until a country or a route is picked (they are past events).
 - Not automated: the yearly report figures in `data.js` (IC3, ITRC, APWG, Chainalysis, Cloudflare).
+
+## v5
+- Restart: `restartSession()` in clock.js fires `breachclock:restart`. The home meter card has a
+  restart button; on the clock page, clicking "Since you arrived" again restarts.
+- Latest filter (scripts/update_latest.py): breaches must be verified, happened within 2 years,
+  surfaced in 180 days, and have 1M+ accounts or 250K+ with sensitive data. Flaws (30 days) must be
+  used by ransomware or be in COMMON_VENDORS software. 6 each, each with a "why it's here" line.
+- Spot the con (`tricks.html`, `tricks.js`): the four buttons (Rush, Rank, Reward, Rattle), nine
+  tricks with tappable tells in mock messages, a cheat sheet and a quiz. Fictional brands only.

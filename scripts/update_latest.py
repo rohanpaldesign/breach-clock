@@ -15,11 +15,25 @@ import urllib.request
 HIBP = 'https://haveibeenpwned.com/api/v3/breaches'
 KEV = 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json'
 UA = 'breach-clock-site/1.0 (+https://github.com/rohanpaldesign/breach-clock)'
-BREACH_MIN_ACCOUNTS = 100_000
-BREACH_DAYS = 120
+# Only what matters. A breach makes the cut if it is recent, real, and either big or sensitive.
+BREACH_BIG = 1_000_000
+BREACH_SENSITIVE_MIN = 250_000
+BREACH_ADDED_DAYS = 180
+BREACH_HAPPENED_YEARS = 2
+SENSITIVE = {
+    'Passwords': 'passwords', 'Government issued IDs': 'government IDs', 'Passport numbers': 'passport numbers',
+    'Social security numbers': 'Social Security numbers', 'National identity numbers': 'national ID numbers',
+    'Bank account numbers': 'bank account numbers', 'Bank card numbers': 'card numbers', 'Credit cards': 'card numbers',
+    'Partial credit card data': 'partial card numbers', 'Health insurance information': 'health insurance details',
+    'Medical records': 'medical records', 'Health records': 'health records', 'Tax file numbers': 'tax numbers',
+    "Driver's licenses": "driver's licences", 'Biometric data': 'biometric data',
+}
+# A flaw makes the cut if ransomware gangs use it, or it is in software most people or offices run.
 FLAW_DAYS = 30
-KEEP = 12
-
+COMMON_VENDORS = ('microsoft', 'apple', 'google', 'android', 'chrome', 'mozilla', 'cisco', 'fortinet', 'ivanti',
+                  'citrix', 'vmware', 'broadcom', 'palo alto', 'atlassian', 'adobe', 'oracle', 'sap', 'samsung',
+                  'linux', 'zoom', 'sonicwall', 'juniper', 'check point', 'wordpress', 'qualcomm', 'apache')
+KEEP = 6
 
 def get(url):
     req = urllib.request.Request(url, headers={'User-Agent': UA})
@@ -41,58 +55,70 @@ def main():
     today = now.date()
 
     breaches = []
-    month_breaches = 0
-    month_accounts = 0
     for b in get(HIBP):
-        if not b.get('IsVerified') or b.get('IsFabricated') or b.get('IsSpamList') or b.get('IsRetired'):
+        if (not b.get('IsVerified') or b.get('IsFabricated') or b.get('IsSpamList') or b.get('IsRetired')
+                or b.get('IsStealerLog') or b.get('IsMalware') or b.get('IsSensitive')):
             continue
         added = dt.date.fromisoformat(b['AddedDate'][:10])
-        age = (today - added).days
-        if age <= 30:
-            month_breaches += 1
-            month_accounts += b['PwnCount']
-        if age > BREACH_DAYS or b['PwnCount'] < BREACH_MIN_ACCOUNTS or b.get('IsSensitive'):
+        try:
+            happened = dt.date.fromisoformat(b['BreachDate'])
+        except ValueError:
             continue
+        if (today - added).days > BREACH_ADDED_DAYS or (today - happened).days > BREACH_HAPPENED_YEARS * 365:
+            continue
+        n = b['PwnCount']
+        sens = []
+        for c in b['DataClasses']:
+            if c in SENSITIVE and SENSITIVE[c] not in sens:
+                sens.append(SENSITIVE[c])
+        if n < BREACH_BIG and not (sens and n >= BREACH_SENSITIVE_MIN):
+            continue
+        size = f"{n / 1e6:.1f}M" if n >= 1e6 else f"{round(n / 1e3)}K"
+        why = f"{size} accounts" + (f" · {', '.join(sens[:3])} exposed" if sens else '')
         breaches.append({
             'name': b['Title'],
             'domain': b.get('Domain') or '',
             'happened': b['BreachDate'],
             'added': b['AddedDate'][:10],
-            'accounts': b['PwnCount'],
+            'accounts': n,
             'data': b['DataClasses'][:6],
             'about': text(b['Description']),
+            'why': why,
             'url': f"https://haveibeenpwned.com/Breach/{b['Name']}",
-            'stealer': bool(b.get('IsStealerLog') or b.get('IsMalware')),
         })
     breaches.sort(key=lambda x: (x['added'], x['accounts']), reverse=True)
 
     kev = get(KEV)
     flaws = []
-    month_flaws = 0
     for v in kev['vulnerabilities']:
         added = dt.date.fromisoformat(v['dateAdded'])
-        age = (today - added).days
-        if age <= 30:
-            month_flaws += 1
-        if age > FLAW_DAYS:
+        if (today - added).days > FLAW_DAYS:
             continue
+        ransomware = v.get('knownRansomwareCampaignUse') == 'Known'
+        vendor = v['vendorProject']
+        common = any(k in f"{vendor} {v['product']}".lower() for k in COMMON_VENDORS)
+        if not (ransomware or common):
+            continue
+        title = v['product'] if v['product'].lower().startswith(vendor.lower()) else f"{vendor} {v['product']}"
+        title = title.replace('Multiple Products', 'products').replace('Chromium', 'Chrome and Chromium browsers')
         flaws.append({
             'cve': v['cveID'],
-            'title': v['product'] if v['product'].lower().startswith(v['vendorProject'].lower()) else f"{v['vendorProject']} {v['product']}",
-            'vendor': v['vendorProject'],
+            'title': title,
+            'vendor': vendor,
             'product': v['product'],
             'name': v['vulnerabilityName'],
             'added': v['dateAdded'],
             'about': text(v['shortDescription']),
             'fix': text(v['requiredAction'], 220),
-            'ransomware': v.get('knownRansomwareCampaignUse') == 'Known',
+            'ransomware': ransomware,
+            'who': 'Used in ransomware attacks' if ransomware else f'Affects anyone using {title}',
             'url': f"https://nvd.nist.gov/vuln/detail/{v['cveID']}",
         })
     flaws.sort(key=lambda x: (x['added'], x['ransomware']), reverse=True)
 
     out = {
         'checked': now.strftime('%Y-%m-%dT%H:%MZ'),
-        'month': {'breaches': month_breaches, 'accounts': month_accounts, 'flaws': month_flaws},
+        'counts': {'breaches': len(breaches), 'accounts': sum(x['accounts'] for x in breaches), 'flaws': len(flaws)},
         'kevTotal': kev.get('count', len(kev['vulnerabilities'])),
         'breaches': breaches[:KEEP],
         'flaws': flaws[:KEEP],
@@ -111,7 +137,7 @@ def main():
         return
     with open(path, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    print(f"breaches {len(out['breaches'])}, flaws {len(out['flaws'])}, month {out['month']}")
+    print(f"breaches {len(out['breaches'])}, flaws {len(out['flaws'])}, counts {out['counts']}")
 
 
 if __name__ == '__main__':

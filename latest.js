@@ -19,30 +19,32 @@ export async function initLatest() {
     return;
   }
   document.getElementById('latestChecked').textContent = `Last checked ${ago(d.checked)}.`;
-  const M = d.month;
+  const M = d.counts;
   document.getElementById('latestStats').innerHTML = [
-    [M.breaches, 'verified breaches added in the last 30 days'],
+    [M.breaches, 'breaches big or sensitive enough to list, last 6 months'],
     [fmtBig(M.accounts, ''), 'accounts exposed in them'],
-    [M.flaws, 'flaws newly confirmed as exploited in the last 30 days'],
+    [M.flaws, 'flaws in common software being exploited, last 30 days'],
     [d.kevTotal.toLocaleString('en-US'), 'flaws on CISA’s exploited list in total'],
   ].map(([v, l]) => `<div class="gstat"><span class="v">${esc(v)}</span><span class="l">${esc(l)}</span></div>`).join('');
 
   document.getElementById('latestBreaches').innerHTML = d.breaches.map((b) => `
     <article class="news">
-      <p class="news-k">${b.stealer ? 'Malware logs' : 'Breach'} · surfaced ${fmtDate(b.added)}</p>
+      <p class="news-k">Breach · surfaced ${fmtDate(b.added)}</p>
       <h3 class="news-t">${esc(b.name)}</h3>
       <p class="news-n">${esc(fmtBig(b.accounts, ''))} <span>accounts${b.happened ? `, happened ${fmtDate(b.happened)}` : ''}</span></p>
+      <p class="news-why"><b>Why it’s here:</b> ${esc(b.why)}</p>
       <p class="news-a">${esc(b.about)}</p>
       <ul class="news-chips">${b.data.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <a class="news-l" href="${esc(b.url)}" target="_blank" rel="noopener">Check if you’re in it ${arrow}</a>
-    </article>`).join('') || '<p class="fine">No big new breaches in the last four months.</p>';
+    </article>`).join('') || '<p class="fine">A quiet stretch: nothing big enough to list.</p>';
 
   document.getElementById('latestFlaws').innerHTML = d.flaws.map((f) => `
     <article class="news">
       <p class="news-k">Exploited · added ${fmtDate(f.added)}${f.ransomware ? ' <span class="badge claimed">used by ransomware</span>' : ''}</p>
       <h3 class="news-t">${esc(f.title)}</h3>
+      <p class="news-why"><b>Why it’s here:</b> ${esc(f.who)}</p>
       <p class="news-a">${esc(f.about)}</p>
       <p class="news-fix"><b>Fix:</b> ${esc(f.fix)}</p>
       <a class="news-l" href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.cve)} ${arrow}</a>
-    </article>`).join('') || '<p class="fine">Nothing new on the list in the last 30 days.</p>';
+    </article>`).join('') || '<p class="fine">A quiet stretch: nothing big enough to list.</p>';
 }

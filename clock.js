@@ -14,6 +14,12 @@ try {
   else sessionStorage.setItem('breachclock:start', String(started));
 } catch {}
 export const sessionElapsed = () => (Date.now() - started) / 1000;
+// Restart "since you opened" for the whole site (this tab): every counter listens for the event.
+export function restartSession() {
+  started = Date.now();
+  try { sessionStorage.setItem('breachclock:start', String(started)); } catch {}
+  window.dispatchEvent(new Event('breachclock:restart'));
+}
 
 // Rolling digits. Rebuilds when the shape of the string changes, otherwise just rolls.
 // Shrinks a number so it always fits its container; the base size comes from CSS.
@@ -118,7 +124,19 @@ export function initClock() {
   const hero = document.getElementById('clock');
   const pauseBtn = document.getElementById('pauseBtn');
 
-  document.querySelectorAll('.hero-head [data-mode]').forEach((b) => b.addEventListener('click', () => {
+  window.addEventListener('breachclock:restart', () => {
+    elapsed = 0;
+    render();
+    document.getElementById('bigNum').classList.remove('flash');
+    void document.getElementById('bigNum').offsetWidth;
+    document.getElementById('bigNum').classList.add('flash');
+  });
+  document.querySelectorAll('.hero-head [data-mode]').forEach((b) => b.addEventListener('click', (e) => {
+    // Clicking "Since you arrived" while it is already on (or its restart icon) restarts the meter.
+    if (b.dataset.mode === 'live' && (mode === 'live' || e.target.closest('[data-restart]'))) {
+      restartSession();
+      if (mode === 'live') return;
+    }
     mode = b.dataset.mode;
     document.querySelectorAll('.hero-head [data-mode]').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
     sinceLabel.textContent = mode === 'live' ? 'Since you opened this page' : mode === 'day' ? 'On an average day' : 'In a year';
