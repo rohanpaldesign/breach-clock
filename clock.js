@@ -16,8 +16,25 @@ try {
 export const sessionElapsed = () => (Date.now() - started) / 1000;
 
 // Rolling digits. Rebuilds when the shape of the string changes, otherwise just rolls.
+// Shrinks a number so it always fits its container; the base size comes from CSS.
+const fitted = new Set();
+function fit(el) {
+  el.style.fontSize = '';
+  const box = el.parentElement;
+  const cs = getComputedStyle(box);
+  const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const w = el.scrollWidth;
+  if (avail > 0 && w > avail) el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) * avail) / w * 0.98}px`;
+}
+let resizeTimer = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => fitted.forEach(fit), 120);
+});
+
 export function odometer(el) {
   el.classList.add('odo');
+  fitted.add(el);
   let cells = [];
   const isD = (ch) => ch >= '0' && ch <= '9';
   const build = (str) => {
@@ -47,7 +64,11 @@ export function odometer(el) {
   return (str) => {
     el.setAttribute('aria-label', str);
     const same = cells.length === str.length && [...str].every((ch, i) => isD(ch) === isD(cells[i].ch) && (isD(ch) || ch === cells[i].ch));
-    if (!same) return build(str);
+    if (!same) {
+      build(str);
+      fit(el);
+      return;
+    }
     [...str].forEach((ch, i) => {
       const c = cells[i];
       if (c.ch !== ch) {
