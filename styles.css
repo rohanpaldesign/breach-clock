@@ -432,3 +432,47 @@ html { scroll-padding-top: 0; }
 .live-since { margin: 0; }
 .float-live { text-decoration: none; color: inherit; }
 .foot-links { display: flex; gap: 16px; }
+
+/* v4: odometer digits never overlap, whatever the parent's letter-spacing */
+.odo { letter-spacing: 0; }
+.odo-d, .odo-col span, .odo-s { height: 1.08em; line-height: 1.08; }
+.odo-col { transform-origin: top; }
+
+/* v4: Latest */
+.tile-latest { grid-column: span 6; }
+.tile-live { grid-column: span 6; }
+.tile-news { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 10px; position: relative; z-index: 1; }
+.tile-news li { display: grid; gap: 2px; padding-top: 10px; border-top: 1px solid var(--line); }
+.tn-k { font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--alert); }
+.tn-t { font-size: 19px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+.tn-s { color: var(--muted); font-size: 13px; }
+.sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 20px; flex-wrap: wrap; margin-bottom: 20px; }
+.sec-head .h-lg { margin: 0; }
+.sec-head .fine { margin: 0; }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.news { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.news-k { font: 500 11px/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; }
+.news-k .badge { margin-left: 4px; color: var(--alert); }
+.news-t { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
+.news-n { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin: 0; color: var(--alert); }
+.news-n span { font-size: 14px; color: var(--muted); letter-spacing: 0; font-weight: 400; }
+.news-a { margin: 0; font-size: 14.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.news-fix { margin: 0; font-size: 13.5px; color: var(--muted); }
+.news-chips { list-style: none; padding: 0; margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.news-chips li { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; color: var(--muted); }
+.news-l { margin-top: auto; padding-top: 6px; display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--signal); text-decoration: none; }
+.news-l svg { width: 14px; height: 14px; }
+.news-l:hover { text-decoration: underline; }
+
+/* v4: On the record route panel */
+.yr-bars { display: flex; align-items: flex-end; gap: 2px; height: 48px; margin-top: 4px; }
+.yr-bars span { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.yr-bars i { width: 100%; background: var(--signal); border-radius: 2px 2px 0 0; min-height: 2px; }
+.yr-span { margin-top: 4px; }
+.bar-static { position: relative; display: flex; justify-content: space-between; gap: 10px; padding: 5px 8px; border-radius: 8px; font-size: 14px; overflow: hidden; }
+.bar-static span, .bar-static b { position: relative; z-index: 1; }
+.bar-static b { font-weight: 500; }
+.bar-static i { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, var(--signal) 18%, transparent); border-radius: 8px; }
+.examples { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
+.linkish { border: 0; background: none; padding: 0; color: var(--signal); cursor: pointer; text-decoration: underline; font-size: 13px; }
+@media (max-width: 980px) { .tile-latest, .tile-live { grid-column: 1 / -1; } }

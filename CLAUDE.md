@@ -49,3 +49,14 @@ Cybercrime made visible: live counters since you opened the page, the biggest br
   the page). Arrival times are simulated (Poisson); say so.
 - Globes share `globe-core.js` (palette cached, render loop pauses off screen or in hidden tabs).
 - "Since you opened this page" uses a sessionStorage start time, so it carries across pages.
+
+## v4: Latest updates itself
+- `latest.html` + `latest.js` read `data/latest.json`. `.github/workflows/update.yml` runs
+  `scripts/update_latest.py` daily at 06:00 UTC, commits only when the data changed, then asks Pages
+  to rebuild. Sources: HIBP breach list (CC BY 4.0) and CISA KEV (public domain), no keys.
+- Curation rules are constants at the top of the script: verified HIBP breaches of at least 100,000
+  accounts from the last 120 days, KEV entries from the last 30 days, 12 each.
+- The header nav is only Latest / Sources / About (`NAV` in build_pages.py); other pages are reached
+  from the home cards.
+- On the record stays still until a country or a route is picked (they are past events).
+- Not automated: the yearly report figures in `data.js` (IC3, ITRC, APWG, Chainalysis, Cloudflare).

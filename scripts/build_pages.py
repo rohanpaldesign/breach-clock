@@ -8,6 +8,7 @@ import html
 PAGES = [
     # id, file, nav label, <title>, description
     ('index', 'index.html', 'Home', 'Breach Clock', 'Cybercrime, counted: attacks in flight, money lost, the biggest breaches and how they happen. Every figure sourced.'),
+    ('latest', 'latest.html', 'Latest', 'Latest attacks · Breach Clock', 'The newest notable data breaches and the software flaws attackers are using right now, updated daily.'),
     ('live', 'live.html', 'Live', 'Attacks in flight · Breach Clock', 'DDoS attacks travelling between countries at the real average pace, from Cloudflare data.'),
     ('clock', 'clock.html', 'Since you arrived', 'The meter is running · Breach Clock', 'Money lost, data exposed and phishing sites created since you opened the page, at published rates.'),
     ('named', 'named.html', 'On the record', 'On the record · Breach Clock', 'Cyberattacks researchers or governments traced to a country, 2000 to 2025, from EuRepoC.'),
@@ -16,13 +17,14 @@ PAGES = [
     ('sources', 'sources.html', 'Sources', 'Sources · Breach Clock', 'Every figure on Breach Clock and the report it came from.'),
     ('about', 'about.html', 'About', 'About · Breach Clock', 'What Breach Clock shows and how to read its numbers.'),
 ]
+NAV = ('latest', 'about', 'sources')  # the rest are reached from the home cards
 ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ffb000' stroke-width='3'/%3E%3Cpath d='M16 8v8l5 3' stroke='%23ffb000' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
 
 
 def shell(pid, title, desc, body):
     nav = '\n'.join(
         f'      <a href="{f}"{" aria-current=\"page\"" if p == pid else ""}>{label}</a>'
-        for p, f, label, _, _ in PAGES if p != 'index'
+        for p, f, label, _, _ in PAGES if p in NAV
     )
     pill = '' if pid in ('clock', 'index') else '''
   <a class="float-live" id="floatLive" href="clock.html" aria-label="Lost since you opened this page. Open the live counters.">
