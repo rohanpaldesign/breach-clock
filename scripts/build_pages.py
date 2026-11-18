@@ -14,6 +14,7 @@ PAGES = [
     ('scale', 'scale.html', 'Scale', 'Breaches to scale · Breach Clock', 'The biggest data breaches drawn to scale, one dot per million records.'),
     ('how', 'how.html', 'How it happens', 'How it happens · Breach Clock', 'Five common attacks, step by step, and the one place each could have been stopped.'),
     ('sources', 'sources.html', 'Sources', 'Sources · Breach Clock', 'Every figure on Breach Clock and the report it came from.'),
+    ('about', 'about.html', 'About', 'About · Breach Clock', 'What Breach Clock shows and how to read its numbers.'),
 ]
 ICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ffb000' stroke-width='3'/%3E%3Cpath d='M16 8v8l5 3' stroke='%23ffb000' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
 
@@ -66,7 +67,7 @@ def shell(pid, title, desc, body):
 
     <footer class="card foot">
       <p>Breach Clock. Figures refresh as new reports come out. A static site; nothing about you is tracked.</p>
-      <a href="https://github.com/rohanpaldesign/breach-clock">Source on GitHub</a>
+      <span class="foot-links"><a href="about.html">About</a> <a href="sources.html">Sources</a> <a href="https://github.com/rohanpaldesign/breach-clock">GitHub</a></span>
     </footer>
   </div>
 {pill}

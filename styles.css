@@ -431,3 +431,4 @@ html { scroll-padding-top: 0; }
 .lg-hit { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--alert); display: inline-block; }
 .live-since { margin: 0; }
 .float-live { text-decoration: none; color: inherit; }
+.foot-links { display: flex; gap: 16px; }
