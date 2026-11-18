@@ -16,6 +16,7 @@ const loaders = {
   clock: () => import('./clock.js').then((m) => m.initClock()),
   named: () => import('./named.js').then((m) => m.initNamed()),
   scale: () => import('./scale.js').then((m) => m.initScale()),
+  tricks: () => import('./tricks.js').then((m) => m.initTricks()),
   how: () => import('./walkthroughs.js').then((m) => m.initWalkthroughs()),
   sources: () => import('./sources.js').then((m) => m.initSources()),
 };

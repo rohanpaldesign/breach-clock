@@ -1,6 +1,6 @@
     <a class="card tile tile-latest" href="latest.html">
       <span class="kicker"><span class="live-dot" aria-hidden="true"></span>Latest</span>
-      <span class="tile-title">This week in breaches</span>
+      <span class="tile-title">Worth knowing about</span>
       <ul class="tile-news" id="tileNews"><li class="fine">Loading…</li></ul>
       <span class="tile-line" id="tileNewsChecked">Updated every day.</span>
       <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
@@ -16,13 +16,14 @@
       </svg>
       <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
-    <a class="card tile" href="clock.html">
+    <div class="card tile tile-meter">
+      <button class="tile-restart" id="tileRestart" type="button" aria-label="Restart the meter" title="Restart the meter"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5"/></svg></button>
       <span class="kicker">Since you opened this page</span>
-      <span class="tile-title">The meter is running</span>
+      <a class="tile-title tile-link" href="clock.html">The meter is running</a>
       <span class="tile-num alert" id="tileLoss">$0</span>
       <span class="tile-line">lost to internet crime reported to the FBI, at the 2025 average rate.</span>
       <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </a>
+    </div>
     <a class="card tile" href="named.html">
       <span class="kicker">On the record</span>
       <span class="tile-title">When an attack gets a name</span>
@@ -44,7 +45,14 @@
       <span class="tile-line">A flaw, ransomware, phishing, a payment scam and a SIM swap, each with the one place it could have been stopped.</span>
       <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
-    <a class="card tile tile-wide" href="sources.html">
+    <a class="card tile" href="tricks.html">
+      <span class="kicker">Spot the con</span>
+      <span class="tile-title">Every con presses four buttons</span>
+      <span class="tile-num">9</span>
+      <span class="tile-line">tricks scammers play on people, from fake parcel texts to cloned voices, and the tell that gives each one away.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile" href="sources.html">
       <span class="kicker">Sources</span>
       <span class="tile-title">Where every number comes from</span>
       <span class="tile-line">The FBI, Cloudflare, EuRepoC, APWG, ITRC, Chainalysis, Verizon and more, each marked as measured, second-hand or claimed.</span>

@@ -14,6 +14,7 @@ PAGES = [
     ('named', 'named.html', 'On the record', 'On the record · Breach Clock', 'Cyberattacks researchers or governments traced to a country, 2000 to 2025, from EuRepoC.'),
     ('scale', 'scale.html', 'Scale', 'Breaches to scale · Breach Clock', 'The biggest data breaches drawn to scale, one dot per million records.'),
     ('how', 'how.html', 'How it happens', 'How it happens · Breach Clock', 'Five common attacks, step by step, and the one place each could have been stopped.'),
+    ('tricks', 'tricks.html', 'Spot the con', 'Spot the con · Breach Clock', 'Phishing, smishing, voice clones and more: find the tells in nine common scams and learn the one rule that beats them all.'),
     ('sources', 'sources.html', 'Sources', 'Sources · Breach Clock', 'Every figure on Breach Clock and the report it came from.'),
     ('about', 'about.html', 'About', 'About · Breach Clock', 'What Breach Clock shows and how to read its numbers.'),
 ]

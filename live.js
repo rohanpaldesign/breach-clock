@@ -70,6 +70,7 @@ export async function initLive() {
   const hits = [];
   const feed = [];
   let drawn = 0;
+  window.addEventListener('breachclock:restart', () => { drawn = 0; feed.length = 0; lastFeedLen = -1; renderFeed(); });
   let selected = null;
   function spawn(dt) {
     for (const r of routes) {
