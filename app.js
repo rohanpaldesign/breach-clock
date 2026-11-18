@@ -11,6 +11,7 @@ matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => win
 const page = document.body.dataset.page;
 const loaders = {
   index: () => import('./home.js').then((m) => m.initHome()),
+  latest: () => import('./latest.js').then((m) => m.initLatest()),
   live: () => import('./live.js').then((m) => m.initLive()),
   clock: () => import('./clock.js').then((m) => m.initClock()),
   named: () => import('./named.js').then((m) => m.initNamed()),

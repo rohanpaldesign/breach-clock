@@ -49,7 +49,7 @@ export function initSources() {
     <thead><tr><th>Breach</th><th>Year</th><th>Size</th><th>Cause</th><th>Source</th><th>Type</th></tr></thead>
     <tbody>${rows.map((b) => `<tr><td>${esc(b.name)}</td><td>${b.year}</td><td class="v">${fmtRecords(b.records)} ${esc(b.unit)}</td><td>${esc(CAUSES[b.cause])}</td><td>${link(b.source)}</td><td>${kind(b.status)}</td></tr>`).join('')}</tbody>`;
 
-  const used = new Set(['cfReport', 'cfRadar', 'eurepoc', 'worldCountries', 'worldAtlas', ...COUNTERS.map((c) => c.source), ...Object.values(FACTS).map((f) => f.source), ...BREACHES.map((b) => b.source)]);
+  const used = new Set(['hibp', 'cisaKev', 'cfReport', 'cfRadar', 'eurepoc', 'worldCountries', 'worldAtlas', ...COUNTERS.map((c) => c.source), ...Object.values(FACTS).map((f) => f.source), ...BREACHES.map((b) => b.source)]);
   document.getElementById('srcList').innerHTML = Object.entries(SOURCES).filter(([id]) => used.has(id)).map(([, s]) =>
     `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>, ${esc(s.publisher)}${s.date ? `, ${esc(s.date)}` : ''}</li>`).join('');
 }

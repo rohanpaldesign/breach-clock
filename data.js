@@ -8,6 +8,18 @@
 export const ACCESSED = '16 November 2026';
 
 export const SOURCES = {
+  hibp: {
+    publisher: 'Have I Been Pwned',
+    title: 'Breach list via the HIBP API (CC BY 4.0), updated daily',
+    date: '',
+    url: 'https://haveibeenpwned.com/PwnedWebsites',
+  },
+  cisaKev: {
+    publisher: 'CISA',
+    title: 'Known Exploited Vulnerabilities catalog, updated daily',
+    date: '',
+    url: 'https://www.cisa.gov/known-exploited-vulnerabilities-catalog',
+  },
   cfReport: {
     publisher: 'Cloudflare',
     title: 'DDoS threat report for 2026 H1',

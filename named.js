@@ -23,7 +23,7 @@ export async function initNamed() {
   const ll = (code) => [C[code].lon, C[code].lat];
 
   // Filters
-  const state = { year: 'all', types: new Set(Object.keys(TYPE_LABELS).concat('other')), all: false, selected: null, hover: null };
+  const state = { year: 'all', types: new Set(Object.keys(TYPE_LABELS).concat('other')), all: false, selected: null, route: null, hover: null };
   const keep = (y, t) => (state.year === 'all' || y === state.year) && state.types.has(t);
   let shown = [];
   function refilter() {
@@ -94,7 +94,7 @@ export async function initNamed() {
     wrap, canvas, tip,
     codeByNum: byNum,
     nameOf: (code) => C[code].name,
-    onSelect: (code) => { state.selected = code; if (code) G.focus(ll(code)); renderPanel(); },
+    onSelect: (code) => { state.selected = code; state.route = null; if (code) G.focus(ll(code)); renderPanel(); },
     overlay: draw,
   });
   G.numOf = (code) => C[code].num;
@@ -103,13 +103,16 @@ export async function initNamed() {
   function draw(g) {
     const { ctx, path, proj, P, reduce, t } = g;
     const sel = state.selected;
+    const rt = state.route;
     const list = state.all ? shown : shown.slice(0, TOP_N);
+    // Past attacks stay still until a country or route is picked; then only that one replays.
+    const live = (p) => (rt ? `${p.from}>${p.to}` === rt : sel && (p.from === sel || p.to === sel));
     ctx.lineCap = 'round';
     for (const row of list) {
       const p = row.p;
       if (p.from === p.to) continue;
-      const related = sel && (p.from === sel || p.to === sel);
-      const alpha = sel ? (related ? 0.85 : 0.06) : 0.32;
+      const related = live(p);
+      const alpha = rt || sel ? (related ? 0.85 : 0.06) : 0.3;
       const col = row.stateShare >= 0.5 ? P.alert : P.signal;
       ctx.beginPath();
       path(p._line);
@@ -117,11 +120,11 @@ export async function initNamed() {
       ctx.lineWidth = 0.6 + Math.log2(row.n + 1) * 0.55;
       ctx.stroke();
     }
-    if (!reduce) {
+    if (!reduce && (sel || rt)) {
       for (const row of list) {
         const p = row.p;
         if (p.from === p.to) continue;
-        if (sel && p.from !== sel && p.to !== sel) continue;
+        if (!live(p)) continue;
         const k = Math.min(4, 1 + Math.floor(Math.log2(row.n)));
         const speed = 0.16 / (p._d + 0.35);
         const col = row.stateShare >= 0.5 ? P.alert : P.signal;
@@ -142,7 +145,7 @@ export async function initNamed() {
     }
     for (const row of list) {
       const p = row.p;
-      if (p.from !== p.to || (sel && p.from !== sel)) continue;
+      if (p.from !== p.to || (rt && `${p.from}>${p.to}` !== rt) || (sel && p.from !== sel)) continue;
       const pos = ll(p.from);
       if (!g.visible(pos)) continue;
       const [x, y] = proj(pos);
@@ -152,7 +155,7 @@ export async function initNamed() {
       ctx.beginPath();
       ctx.arc(x, y, rad, 0, Math.PI * 2);
       ctx.stroke();
-      if (!reduce) {
+      if (!reduce && (sel || rt)) {
         const ph = (t * 0.5 + hash(p.from)) % 1;
         ctx.strokeStyle = hexA(P.ink, 0.5 * (1 - ph));
         ctx.beginPath();
@@ -166,6 +169,7 @@ export async function initNamed() {
   // Side panel
   function renderPanel() {
     const sel = state.selected;
+    if (state.route) return renderRoute();
     if (!sel) {
       const top = shown.filter((r) => r.p.from !== r.p.to).slice(0, 10);
       const dom = shown.filter((r) => r.p.from === r.p.to).slice(0, 3);
@@ -173,7 +177,7 @@ export async function initNamed() {
         <h3 class="h-sm">Top routes${state.year === 'all' ? '' : ` in ${state.year}`}</h3>
         <ol class="routes">${top.map((r) => route(r)).join('')}</ol>
         ${dom.length ? `<h3 class="h-sm">Inside one country</h3><ol class="routes">${dom.map((r) => route(r)).join('')}</ol>` : ''}
-        <p class="fine">Tap a country on the globe, or a route, to see who attacks it and whom it attacks.</p>`;
+        <p class="fine">These attacks already happened. Pick a country or a route to replay it and see the details.</p>`;
     } else {
       const out = shown.filter((r) => r.p.from === sel && r.p.to !== sel);
       const inn = shown.filter((r) => r.p.to === sel && r.p.from !== sel);
@@ -185,7 +189,7 @@ export async function initNamed() {
         const max = Math.max(1, ...arr.map((r) => r.n));
         return arr.slice(0, 5).map((r) => {
           const other = side === 'out' ? r.p.to : r.p.from;
-          return `<li><button type="button" data-code="${other}"><span>${esc(C[other].name)}</span><b>${r.n}</b><i style="width:${(r.n / max) * 100}%"></i></button></li>`;
+          return `<li><button type="button" data-route="${side === 'out' ? `${sel}>${other}` : `${other}>${sel}`}"><span>${esc(C[other].name)}</span><b>${r.n}</b><i style="width:${(r.n / max) * 100}%"></i></button></li>`;
         }).join('');
       };
       panel.innerHTML = `
@@ -196,14 +200,44 @@ export async function initNamed() {
         ${ex ? `<p class="fine">For example: ${esc(ex.p.examples[0][0])} (${esc(ex.p.examples[0][1].slice(0, 4))}).</p>` : ''}`;
     }
   }
+  function renderRoute() {
+    const [a, b] = state.route.split('>');
+    const row = shown.find((x) => x.p.from === a && x.p.to === b);
+    if (!row) { state.route = null; return renderPanel(); }
+    const ev = row.p.ev.filter(([y, t]) => keep(y, t));
+    const count = (i) => Object.entries(ev.reduce((m, e) => ((m[e[i]] = (m[e[i]] || 0) + 1), m), {})).sort((x, y) => y[1] - x[1]);
+    const years = count(0).filter((y) => y[0] !== 'unknown').sort((x, y) => x[0].localeCompare(y[0]));
+    const types = count(1);
+    const state_ = ev.filter((e) => e[2]).length;
+    const maxY = Math.max(1, ...years.map((y) => y[1]));
+    const title = a === b ? `Inside ${esc(C[a].name)}` : `${esc(C[a].name)} <span aria-hidden="true">→</span><span class="sr">to</span> ${esc(C[b].name)}`;
+    panel.innerHTML = `
+      <div class="gp-head"><h3 class="h-md">${title}</h3><button class="icon-btn" type="button" data-clear aria-label="Clear selection"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="gp-block"><p class="gp-k">Reported attacks</p><p class="gp-v">${ev.length} <span>${Math.round((state_ / ev.length) * 100)}% by a state or state-linked group</span></p>
+        <div class="yr-bars" aria-label="Attacks by year">${years.map(([y, n]) => `<span title="${y}: ${n}"><i style="height:${(n / maxY) * 100}%"></i></span>`).join('')}</div>
+        <p class="fine yr-span">${years.length ? `${years[0][0]} to ${years[years.length - 1][0]}` : ''}</p></div>
+      <div class="gp-block"><p class="gp-k">What kind</p><ol class="bars">${types.map(([t, n]) => `<li><span class="bar-static"><span>${esc(TYPE_LABELS[t] || 'Other')}</span><b>${n}</b><i style="width:${(n / ev.length) * 100}%"></i></span></li>`).join('')}</ol></div>
+      <div class="gp-block"><p class="gp-k">For example</p><ul class="examples">${row.p.examples.map(([n, d]) => `<li>${esc(n)} <span class="fine">(${esc(d.slice(0, 4))})</span></li>`).join('')}</ul></div>
+      <p class="fine"><button class="linkish" type="button" data-code="${a}">See all of ${esc(C[a].name)}</button>${a !== b ? ` · <button class="linkish" type="button" data-code="${b}">See all of ${esc(C[b].name)}</button>` : ''}</p>`;
+  }
+  function selectRoute(key) {
+    G.select(null);
+    state.route = key;
+    const [a, b] = key.split('>');
+    const row = shown.find((x) => x.p.from === a && x.p.to === b);
+    G.focus(a === b || !row ? ll(a) : row.p._f(0.5));
+    renderPanel();
+  }
   function route(r) {
     const a = C[r.p.from].name;
     const b = C[r.p.to].name;
     const label = r.p.from === r.p.to ? esc(a) : `${esc(a)} <span aria-hidden="true">→</span><span class="sr">to</span> ${esc(b)}`;
-    return `<li><button type="button" data-code="${r.p.from === r.p.to ? r.p.from : r.p.to}"><i class="dotc ${r.p.from === r.p.to ? 'dom' : r.stateShare >= 0.5 ? 'st' : 'ns'}"></i><span>${label}</span><b>${r.n}</b></button></li>`;
+    return `<li><button type="button" data-route="${r.p.from}>${r.p.to}"><i class="dotc ${r.p.from === r.p.to ? 'dom' : r.stateShare >= 0.5 ? 'st' : 'ns'}"></i><span>${label}</span><b>${r.n}</b></button></li>`;
   }
   panel.addEventListener('click', (e) => {
-    if (e.target.closest('[data-clear]')) return select(null);
+    if (e.target.closest('[data-clear]')) { state.route = null; return select(null); }
+    const rb = e.target.closest('[data-route]');
+    if (rb) return selectRoute(rb.dataset.route);
     const b = e.target.closest('[data-code]');
     if (b) select(b.dataset.code);
   });

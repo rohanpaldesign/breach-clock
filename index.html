@@ -22,11 +22,7 @@
         Breach Clock
       </a>
       <nav class="nav" aria-label="Pages">
-      <a href="live.html">Live</a>
-      <a href="clock.html">Since you arrived</a>
-      <a href="named.html">On the record</a>
-      <a href="scale.html">Scale</a>
-      <a href="how.html">How it happens</a>
+      <a href="latest.html">Latest</a>
       <a href="sources.html">Sources</a>
       <a href="about.html">About</a>
       </nav>
@@ -36,7 +32,14 @@
     </header>
 
     <main class="deck-main">
-    <a class="card tile tile-wide" href="live.html">
+    <a class="card tile tile-latest" href="latest.html">
+      <span class="kicker"><span class="live-dot" aria-hidden="true"></span>Latest</span>
+      <span class="tile-title">This week in breaches</span>
+      <ul class="tile-news" id="tileNews"><li class="fine">Loading…</li></ul>
+      <span class="tile-line" id="tileNewsChecked">Updated every day.</span>
+      <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card tile tile-live" href="live.html">
       <span class="kicker"><span class="live-dot" aria-hidden="true"></span>Live</span>
       <span class="tile-title">Attacks in flight</span>
       <span class="tile-num"><span id="tileRate">89</span><small>a minute</small></span>
@@ -75,7 +78,7 @@
       <span class="tile-line">A flaw, ransomware, phishing, a payment scam and a SIM swap, each with the one place it could have been stopped.</span>
       <span class="tile-open">Open <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
-    <a class="card tile tile-full" href="sources.html">
+    <a class="card tile tile-wide" href="sources.html">
       <span class="kicker">Sources</span>
       <span class="tile-title">Where every number comes from</span>
       <span class="tile-line">The FBI, Cloudflare, EuRepoC, APWG, ITRC, Chainalysis, Verizon and more, each marked as measured, second-hand or claimed.</span>
