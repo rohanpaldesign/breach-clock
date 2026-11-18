@@ -482,3 +482,10 @@ html { scroll-padding-top: 0; }
 .odo > * { flex: none; }
 .tile-num.odo { display: inline-flex; align-self: flex-start; }
 .big-num.odo { overflow: visible; }
+
+/* v5: plain counting digits (replaces the rolling columns) */
+.odo { display: inline-flex; gap: 0 !important; white-space: nowrap; letter-spacing: 0; max-width: none; overflow: visible; }
+.odo > span { flex: none; display: inline-block; height: auto; line-height: inherit; font-variant-numeric: tabular-nums; }
+.odo > span.tick { animation: odoTick 0.35s ease-out; }
+@keyframes odoTick { from { opacity: 0.2; transform: translateY(-0.08em); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .odo > span.tick { animation: none; } }

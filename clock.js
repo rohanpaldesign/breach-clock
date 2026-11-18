@@ -24,62 +24,55 @@ function fit(el) {
   const cs = getComputedStyle(box);
   const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
   const w = el.scrollWidth;
-  if (avail > 0 && w > avail) el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) * avail) / w * 0.98}px`;
+  if (avail > 0 && w > avail) el.style.fontSize = `${(parseFloat(getComputedStyle(el).fontSize) * avail) / w * 0.97}px`;
 }
+const refitAll = () => fitted.forEach(fit);
 let resizeTimer = 0;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => fitted.forEach(fit), 120);
+  resizeTimer = setTimeout(refitAll, 120);
 });
+// The web font is wider than the fallback, so measure again once it has loaded.
+document.fonts?.ready.then(refitAll);
+window.addEventListener('load', refitAll);
 
+// Counting digits. Plain characters (no rolling columns, so nothing can sit half-way or overlap);
+// a digit that changes slowly gets a short flash.
 export function odometer(el) {
   el.classList.add('odo');
   fitted.add(el);
-  let cells = [];
-  const isD = (ch) => ch >= '0' && ch <= '9';
-  const build = (str) => {
-    el.textContent = '';
-    cells = [...str].map((ch) => {
-      const s = document.createElement('span');
-      s.setAttribute('aria-hidden', 'true');
-      if (isD(ch)) {
-        s.className = 'odo-d';
-        const col = document.createElement('span');
-        col.className = 'odo-col';
-        for (let d = 0; d < 10; d++) {
-          const x = document.createElement('span');
-          x.textContent = d;
-          col.appendChild(x);
-        }
-        col.style.transform = `translateY(-${Number(ch) * 10}%)`;
-        s.appendChild(col);
-      } else {
-        s.className = 'odo-s';
-        s.textContent = ch;
-      }
-      el.appendChild(s);
-      return { s, ch };
-    });
-  };
+  const calm = reducedMotion();
+  let prev = '';
+  let lastFit = 0;
   return (str) => {
     el.setAttribute('aria-label', str);
-    const same = cells.length === str.length && [...str].every((ch, i) => isD(ch) === isD(cells[i].ch) && (isD(ch) || ch === cells[i].ch));
-    if (!same) {
-      build(str);
+    if (str.length !== prev.length) {
+      el.textContent = '';
+      for (const ch of str) {
+        const s = document.createElement('span');
+        s.setAttribute('aria-hidden', 'true');
+        s.textContent = ch;
+        el.appendChild(s);
+      }
+      prev = str;
       fit(el);
       return;
     }
-    [...str].forEach((ch, i) => {
-      const c = cells[i];
-      if (c.ch !== ch) {
-        // A digit that changes faster than the roll would blur, so it snaps instead.
-        const now = performance.now();
-        c.s.firstChild.style.transition = now - (c.t || 0) < 1200 ? 'none' : '';
-        c.t = now;
-        c.s.firstChild.style.transform = `translateY(-${Number(ch) * 10}%)`;
-        c.ch = ch;
+    const now = performance.now();
+    // Re-measure now and then: fonts and layout can settle after the first fit.
+    if (now - lastFit > 2000) { lastFit = now; fit(el); }
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === prev[i]) continue;
+      const k = el.children[i];
+      k.textContent = str[i];
+      if (!calm && now - (k._t || 0) > 1000) {
+        k.classList.remove('tick');
+        void k.offsetWidth;
+        k.classList.add('tick');
       }
-    });
+      k._t = now;
+    }
+    prev = str;
   };
 }
 
