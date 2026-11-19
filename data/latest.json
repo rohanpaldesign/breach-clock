@@ -1,11 +1,11 @@
 {
- "checked": "2026-11-18T05:51Z",
+ "checked": "2026-11-19T15:28Z",
  "counts": {
   "breaches": 21,
   "accounts": 142375506,
-  "flaws": 14
+  "flaws": 15
  },
- "kevTotal": 1782,
+ "kevTotal": 1786,
  "breaches": [
   {
    "name": "Sharecare",
@@ -113,6 +113,19 @@
  ],
  "flaws": [
   {
+   "cve": "CVE-2026-90436",
+   "title": "Apache Axis",
+   "vendor": "Apache",
+   "product": "Axis",
+   "name": "Apache Axis Unsafe Reflection Vulnerability",
+   "added": "2026-11-18",
+   "about": "Apache Axis contains an unsafe reflection vulnerability that could allow an unauthenticated remote attacker to execute arbitrary code via a crafted SOAP fault message that causes Axis to load and instantiate an attacker-specified class when a suitable class is available on the application classpath. The impacted…",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using Apache Axis",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-90436"
+  },
+  {
    "cve": "CVE-2026-123039",
    "title": "Check Point products",
    "vendor": "Check Point",
@@ -176,19 +189,6 @@
    "ransomware": false,
    "who": "Affects anyone using SonicWall SonicOS SSLVPN",
    "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-19868"
-  },
-  {
-   "cve": "CVE-2024-27834",
-   "title": "Apple products",
-   "vendor": "Apple",
-   "product": "Multiple Products",
-   "name": "Apple Multiple Products Improper Authentication Vulnerability",
-   "added": "2026-11-04",
-   "about": "Apple iOS, iPadOS, macOS, Safari, tvOS and watchOS 10.5 contain an improper authentication vulnerability which could allow an attacker with arbitrary read and write capability to bypass pointer authentication.",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Apple products",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-27834"
   }
  ]
 }
