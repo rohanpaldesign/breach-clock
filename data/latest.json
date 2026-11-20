@@ -1,12 +1,30 @@
 {
- "checked": "2026-11-19T15:28Z",
+ "checked": "2026-11-20T15:04Z",
  "counts": {
-  "breaches": 21,
-  "accounts": 142375506,
+  "breaches": 22,
+  "accounts": 145984927,
   "flaws": 15
  },
  "kevTotal": 1786,
  "breaches": [
+  {
+   "name": "Careers360",
+   "domain": "careers360.com",
+   "happened": "2026-11-14",
+   "added": "2026-11-20",
+   "accounts": 3609421,
+   "data": [
+    "Academic records",
+    "Castes",
+    "Email addresses",
+    "Genders",
+    "Names",
+    "Phone numbers"
+   ],
+   "about": "In November 2026, data allegedly taken from the Indian education and careers platform Careers360 appeared on a public hacking forum. The 22M records included 3.6M unique email addresses alongside names, phone numbers, genders and caste categories, and most also contained students' entrance exam results, including…",
+   "why": "3.6M accounts",
+   "url": "https://haveibeenpwned.com/Breach/Careers360"
+  },
   {
    "name": "Sharecare",
    "domain": "sharecare.com",
@@ -92,23 +110,6 @@
    "about": "In August 2026, clothing retailer Carhartt was the target of a ShinyHunters \"pay or leak\" extortion campaign. The group subsequently published data allegedly obtained from the company including 12.9M unique email addresses, names, phone numbers and physical addresses. The published corpus also contained millions of…",
    "why": "12.9M accounts",
    "url": "https://haveibeenpwned.com/Breach/Carhartt"
-  },
-  {
-   "name": "Oz Hair and Beauty",
-   "domain": "ozhairandbeauty.com",
-   "happened": "2026-08-15",
-   "added": "2026-08-19",
-   "accounts": 1988331,
-   "data": [
-    "Email addresses",
-    "Geographic locations",
-    "Names",
-    "Phone numbers",
-    "Purchases"
-   ],
-   "about": "In August 2026, Australian beauty retailer Oz Hair and Beauty was the target of an xpl0itrs extortion attack. The group subsequently published data allegedly obtained from the company, which included 2M unique email addresses along with names, phone numbers, geographic locations (suburb and postcode) and purchases.",
-   "why": "2.0M accounts",
-   "url": "https://haveibeenpwned.com/Breach/OzHairAndBeauty"
   }
  ],
  "flaws": [
