@@ -1,11 +1,11 @@
 {
- "checked": "2026-11-20T15:04Z",
+ "checked": "2026-11-21T14:25Z",
  "counts": {
-  "breaches": 22,
-  "accounts": 145984927,
-  "flaws": 15
+  "breaches": 23,
+  "accounts": 146709250,
+  "flaws": 19
  },
- "kevTotal": 1786,
+ "kevTotal": 1790,
  "breaches": [
   {
    "name": "Careers360",
@@ -24,6 +24,24 @@
    "about": "In November 2026, data allegedly taken from the Indian education and careers platform Careers360 appeared on a public hacking forum. The 22M records included 3.6M unique email addresses alongside names, phone numbers, genders and caste categories, and most also contained students' entrance exam results, including…",
    "why": "3.6M accounts",
    "url": "https://haveibeenpwned.com/Breach/Careers360"
+  },
+  {
+   "name": "Too Lost",
+   "domain": "toolost.com",
+   "happened": "2026-11-02",
+   "added": "2026-11-20",
+   "accounts": 724323,
+   "data": [
+    "Dates of birth",
+    "Driver's licenses",
+    "Email addresses",
+    "Government issued IDs",
+    "IP addresses",
+    "Names"
+   ],
+   "about": "In November 2026, an unauthorised party claimed to have obtained data from the music distributor for independent artists, Too Lost. The data contained 724k unique email addresses belonging to artists, their collaborators and fans. Some records also contained bcrypt password hashes, while a small subset included…",
+   "why": "724K accounts · driver's licences, government IDs, partial card numbers exposed",
+   "url": "https://haveibeenpwned.com/Breach/TooLost"
   },
   {
    "name": "Sharecare",
@@ -94,25 +112,61 @@
    "about": "In August 2026, the French intellectual property software and services company Questel was the target of a ShinyHunters \"pay or leak\" extortion campaign. The group subsequently published an extensive corpus of data they alleged was obtained from the company, largely comprising corporate contact information associated…",
    "why": "1.2M accounts",
    "url": "https://haveibeenpwned.com/Breach/Questel"
-  },
-  {
-   "name": "Carhartt",
-   "domain": "carhartt.com",
-   "happened": "2026-08-13",
-   "added": "2026-08-25",
-   "accounts": 12933413,
-   "data": [
-    "Email addresses",
-    "Names",
-    "Phone numbers",
-    "Physical addresses"
-   ],
-   "about": "In August 2026, clothing retailer Carhartt was the target of a ShinyHunters \"pay or leak\" extortion campaign. The group subsequently published data allegedly obtained from the company including 12.9M unique email addresses, names, phone numbers and physical addresses. The published corpus also contained millions of…",
-   "why": "12.9M accounts",
-   "url": "https://haveibeenpwned.com/Breach/Carhartt"
   }
  ],
  "flaws": [
+  {
+   "cve": "CVE-2026-129448",
+   "title": "Apache Roller",
+   "vendor": "Apache",
+   "product": "Roller",
+   "name": "Apache Roller Deserialization of Untrusted Data Vulnerability",
+   "added": "2026-11-20",
+   "about": "Apache Roller contains a deserialization of untrusted data vulnerability that allows an unauthenticated remote attacker to execute arbitrary code via the XML-RPC endpoint, which accepts and deserializes vendor extension types before authentication. This CVE covers the same underlying vulnerability as CVE-2026-82384…",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using Apache Roller",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-129448"
+  },
+  {
+   "cve": "CVE-2026-123890",
+   "title": "Broadcom VMware vCenter",
+   "vendor": "Broadcom",
+   "product": "VMware vCenter",
+   "name": "VMWare vCenter Authentication Bypass Using an Alternate Path or Channel Vulnerability",
+   "added": "2026-11-20",
+   "about": "Broadcom VMware vCenter contains an authentication bypass using an alternate path or channel vulnerability in the VMware Directory Service that allows an unauthenticated attacker with network access to vCenter to bypass authentication and gain unauthorized access to the system.",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using Broadcom VMware vCenter",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-123890"
+  },
+  {
+   "cve": "CVE-2025-42884",
+   "title": "SAP NetWeaver",
+   "vendor": "SAP",
+   "product": "NetWeaver",
+   "name": "SAP NetWeaver Improper Neutralization of Special Elements in Data Query Logic Vulnerability",
+   "added": "2026-11-20",
+   "about": "SAP NetWeaver Enterprise Portal contains an improper neutralization of special elements in data query logic vulnerability that allows an unauthenticated attacker to disclose or modify server information via injected JNDI environment properties or a URL used during JNDI lookup operations.",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using SAP NetWeaver",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-42884"
+  },
+  {
+   "cve": "CVE-2026-76466",
+   "title": "Cisco Expressway Series",
+   "vendor": "Cisco",
+   "product": "Expressway Series",
+   "name": "Cisco Expressway Series Use of Hard-coded Credentials Vulnerability",
+   "added": "2026-11-20",
+   "about": "Cisco Expressway Series contains a use of hard-coded credentials vulnerability that allows an unauthenticated, remote attacker with persistent cookies and network access to execute commands as root on a clustered device via the database service.",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using Cisco Expressway Series",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-76466"
+  },
   {
    "cve": "CVE-2026-90436",
    "title": "Apache Axis",
@@ -138,58 +192,6 @@
    "ransomware": false,
    "who": "Affects anyone using Check Point products",
    "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-123039"
-  },
-  {
-   "cve": "CVE-2026-124194",
-   "title": "Microsoft Office",
-   "vendor": "Microsoft",
-   "product": "Office",
-   "name": "Microsoft Office Outlook Missing User Interaction for Potentially Unsafe Action Vulnerability",
-   "added": "2026-11-10",
-   "about": "Microsoft Office Outlook contains a missing user interaction for potentially unsafe action vulnerability that allows an unauthorized attacker to perform spoofing over a network.",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Microsoft Office",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-124194"
-  },
-  {
-   "cve": "CVE-2026-20320",
-   "title": "Cisco BroadWorks",
-   "vendor": "Cisco",
-   "product": "BroadWorks",
-   "name": "Cisco BroadWorks Improper Restriction of XML External Entity Reference Vulnerability",
-   "added": "2026-11-10",
-   "about": "Cisco BroadWorks contains an improper restriction of XML external entity reference vulnerability that could allow an unauthenticated, remote attacker to read sensitive configuration information on an affected system.",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Cisco BroadWorks",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-20320"
-  },
-  {
-   "cve": "CVE-2026-125350",
-   "title": "Google Chrome and Chromium browsers",
-   "vendor": "Google",
-   "product": "Chromium",
-   "name": "Google Chromium Use-After-Free Vulnerability",
-   "added": "2026-11-10",
-   "about": "Google Chromium contains a use-after-free vulnerability in the XML component that could allow a remote attacker to execute arbitrary code inside the sandbox via a specially crafted webpage. This vulnerability could affect multiple web browsers that utilize Chromium, including, but not limited to, Google Chrome…",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Google Chrome and Chromium browsers",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-125350"
-  },
-  {
-   "cve": "CVE-2026-19868",
-   "title": "SonicWall SonicOS SSLVPN",
-   "vendor": "SonicWall",
-   "product": "SonicOS SSLVPN",
-   "name": "SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability",
-   "added": "2026-11-06",
-   "about": "SonicWall SonicOS SSLVPN contains a use of single-factor authentication vulnerability that may allow a user with valid credentials for an alternate authentication method to bypass SAML authentication controls. Successful exploitation may also bypass SAML-enforced multi-factor authentication (MFA).",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using SonicWall SonicOS SSLVPN",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-19868"
   }
  ]
 }
