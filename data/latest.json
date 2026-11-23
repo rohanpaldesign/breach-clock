@@ -1,9 +1,9 @@
 {
- "checked": "2026-11-21T14:25Z",
+ "checked": "2026-11-23T17:41Z",
  "counts": {
   "breaches": 23,
   "accounts": 146709250,
-  "flaws": 19
+  "flaws": 20
  },
  "kevTotal": 1790,
  "breaches": [
@@ -168,6 +168,19 @@
    "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-76466"
   },
   {
+   "cve": "CVE-2024-10441",
+   "title": "Synology DiskStation Manager (DSM)",
+   "vendor": "Synology",
+   "product": "DiskStation Manager (DSM)",
+   "name": "Synology DiskStation Manager (DSM) Improper Encoding or Escaping of Output Vulnerability",
+   "added": "2026-11-18",
+   "about": "Synology DSM contains an improper encoding or escaping of output vulnerability in the system plugin daemon in Synology BeeStation OS (BSM) that could allow a remote attacker to execute arbitrary code via unspecified vectors.",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": true,
+   "who": "Used in ransomware attacks",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-10441"
+  },
+  {
    "cve": "CVE-2026-90436",
    "title": "Apache Axis",
    "vendor": "Apache",
@@ -179,19 +192,6 @@
    "ransomware": false,
    "who": "Affects anyone using Apache Axis",
    "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-90436"
-  },
-  {
-   "cve": "CVE-2026-123039",
-   "title": "Check Point products",
-   "vendor": "Check Point",
-   "product": "Multiple Products",
-   "name": "Check Point Multiple Products Incorrect Permission Assignment for Critical Resource Vulnerability",
-   "added": "2026-11-13",
-   "about": "Check Point Firewall, Multi-Domain Security Management Server, Scalable Platforms, Security Gateway, and Security Management Server contain an incorrect permissions assignment for critical resources vulnerability when the Gaia OS DynamicCLI daemon runs as root and listens on a world-writable local socket without…",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Check Point products",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-123039"
   }
  ]
 }
