@@ -1,11 +1,11 @@
 {
- "checked": "2026-11-24T17:13Z",
+ "checked": "2026-11-25T16:57Z",
  "counts": {
-  "breaches": 23,
-  "accounts": 146709250,
-  "flaws": 20
+  "breaches": 21,
+  "accounts": 141588434,
+  "flaws": 21
  },
- "kevTotal": 1792,
+ "kevTotal": 1796,
  "breaches": [
   {
    "name": "Careers360",
@@ -116,6 +116,19 @@
  ],
  "flaws": [
   {
+   "cve": "CVE-2026-103406",
+   "title": "Hewlett Packard Enterprise (HPE) Juniper Session Smart Conductor and Session Smart Router",
+   "vendor": "Hewlett Packard Enterprise (HPE)",
+   "product": "Juniper Session Smart Conductor and Session Smart Router",
+   "name": "Hewlett Packard Enterprise (HPE) Juniper Session Smart Conductor and Session Smart Router OS Command Injection Vulnerability",
+   "added": "2026-11-25",
+   "about": "Hewlett Packard Enterprise (HPE) Juniper Session Smart Conductor and Session Smart Router contain an OS command injection vulnerability that could allow a remote attacker to execute arbitrary commands as root via a specially crafted salt minion ID.",
+   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
+   "ransomware": false,
+   "who": "Affects anyone using Hewlett Packard Enterprise (HPE) Juniper Session Smart Conductor and Session Smart Router",
+   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-103406"
+  },
+  {
    "cve": "CVE-2026-129448",
    "title": "Apache Roller",
    "vendor": "Apache",
@@ -179,19 +192,6 @@
    "ransomware": true,
    "who": "Used in ransomware attacks",
    "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-10441"
-  },
-  {
-   "cve": "CVE-2026-90436",
-   "title": "Apache Axis",
-   "vendor": "Apache",
-   "product": "Axis",
-   "name": "Apache Axis Unsafe Reflection Vulnerability",
-   "added": "2026-11-18",
-   "about": "Apache Axis contains an unsafe reflection vulnerability that could allow an unauthenticated remote attacker to execute arbitrary code via a crafted SOAP fault message that causes Axis to load and instantiate an attacker-specified class when a suitable class is available on the application classpath. The impacted…",
-   "fix": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see…",
-   "ransomware": false,
-   "who": "Affects anyone using Apache Axis",
-   "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-90436"
   }
  ]
 }
