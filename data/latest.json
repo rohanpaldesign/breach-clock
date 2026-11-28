@@ -1,11 +1,11 @@
 {
- "checked": "2026-11-27T16:22Z",
+ "checked": "2026-11-28T15:15Z",
  "counts": {
   "breaches": 21,
   "accounts": 141588434,
-  "flaws": 19
+  "flaws": 17
  },
- "kevTotal": 1805,
+ "kevTotal": 1808,
  "breaches": [
   {
    "name": "Careers360",
